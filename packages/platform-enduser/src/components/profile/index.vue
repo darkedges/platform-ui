@@ -7,7 +7,6 @@ of the MIT license. See the LICENSE file for details. -->
     <BRow v-if="theme" class="my-5">
       <BCol v-if="!theme?.accountPageSections || theme?.accountPageSections.personalInformation.enabled"
         class="profileCol mb-4" lg="4">
-        <p>{{ managedResource }}</p>
         <FrEditProfile @updateProfile="updateProfile" :header="fullName" :profile-image="profileImage"
           :secondary-header="profile.mail" :schema="managedResourceSchema" :profile="profile"
           :show-edit="profile._id !== undefined && isInternalUser === false"
