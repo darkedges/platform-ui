@@ -5,23 +5,14 @@ of the MIT license. See the LICENSE file for details. -->
 <template>
   <div>
     <BCard class="text-center mb-4">
-      <div
-        class="d-flex justify-content-center">
+      <div class="d-flex justify-content-center">
         <div class="fr-profile-image position-relative mb-3 p-0 within-input-button">
-          <BAvatar
-            @click="$bvModal.show('frProfileImageModal')"
-            :button="showImageUpload"
-            size="112px"
+          <BAvatar @click="$bvModal.show('frProfileImageModal')" :button="showImageUpload" size="112px"
             :src="profileImage || require('@forgerock/platform-shared/src/assets/images/avatar.png')"
             :aria-label="showImageUpload ? $t('pages.profile.editProfile.profileImageModal.title') : $t('pages.profile.editProfile.profilePicture')" />
-          <BButton
-            v-if="showImageUpload"
-            class="fr-edit-icon"
-            variant="dark"
+          <BButton v-if="showImageUpload" class="fr-edit-icon" variant="dark"
             @click="$bvModal.show('frProfileImageModal')">
-            <FrIcon
-              icon-class="md-18"
-              name="camera_alt" />
+            <FrIcon icon-class="md-18" name="camera_alt" />
           </BButton>
         </div>
       </div>
@@ -31,38 +22,26 @@ of the MIT license. See the LICENSE file for details. -->
       <div class="text-muted text-truncate">
         {{ secondaryHeader }}
       </div>
-      <BButton
-        v-if="showEdit"
-        ref="editProfileButton"
-        variant="primary"
-        block
-        class="mt-4"
+      <BButton v-if="showEdit" ref="editProfileButton" variant="primary" block class="mt-4"
         @click="$root.$emit('bv::show::modal', 'userDetailsModal')">
         {{ $t('pages.profile.editPersonalInfo') }}
       </BButton>
     </BCard>
 
-    <FrEditPersonalInfo
-      v-if="showEdit"
-      @updateProfile="updateProfile"
-      :schema="schema"
-      :profile="profile" />
+    <FrEditPersonalInfo v-if="showEdit" @updateProfile="updateProfile" :schema="schema" :profile="profile" />
 
-    <FrImageModal
-      v-if="showImageUpload"
-      @updateProfileImage="updateProfile"
-      :profile-image="profileImage" />
+    <FrImageModal v-if="showImageUpload" @updateProfileImage="updateProfile" :profile-image="profileImage" />
   </div>
 </template>
 
 <script>
+import FrIcon from '@forgerock/platform-shared/src/components/Icon';
+import FrEditPersonalInfo from '@forgerock/platform-shared/src/components/profile/EditPersonalInfo';
 import {
   BAvatar,
   BButton,
   BCard,
 } from 'bootstrap-vue';
-import FrEditPersonalInfo from '@forgerock/platform-shared/src/components/profile/EditPersonalInfo';
-import FrIcon from '@forgerock/platform-shared/src/components/Icon';
 import FrImageModal from './ImageModal';
 
 /**
@@ -91,14 +70,14 @@ export default {
      */
     profile: {
       type: Object,
-      default: () => {},
+      default: () => { },
     },
     /**
      * Schema data for profile
      */
     schema: {
       type: Object,
-      default: () => {},
+      default: () => { },
     },
     /**
      * Secondary header below profile image
@@ -138,7 +117,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-:deep {
+:deep() {
   .fr-profile-image {
     .fr-edit-icon {
       position: absolute;

@@ -4,18 +4,14 @@ This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
 <template>
   <div class="pie-chart-container">
-    <div
-      data-testid="chart"
-      ref="d3chart"
-      :id="id"
-    />
+    <div data-testid="chart" ref="d3chart" :id="id" />
   </div>
 </template>
 
 <script>
+import styles from '@/scss/main.scss';
 import * as d3 from 'd3';
 import { isEqual } from 'lodash';
-import styles from '@/scss/main.scss';
 
 /*
  * @description Pie Chart Component used to show data in a pie chart with percentages according the value of each item,
@@ -229,7 +225,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-:deep {
+:deep() {
   .arrow {
     position: absolute;
     display: block;

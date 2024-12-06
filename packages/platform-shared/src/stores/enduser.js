@@ -6,7 +6,7 @@
  */
 
 import { defineStore } from 'pinia';
-import { ref, computed } from 'vue';
+import { computed, ref } from 'vue';
 import { useUserStore } from './user';
 
 // eslint-disable-next-line import/prefer-default-export
@@ -16,6 +16,7 @@ export const useEnduserStore = defineStore('enduser', () => {
   const managedResourceSchema = ref({});
   const preferences = ref({});
   const profileImage = ref('');
+  const identityStrength = ref('');
   const aliasList = ref([]);
   const consentedMappings = ref(null);
 

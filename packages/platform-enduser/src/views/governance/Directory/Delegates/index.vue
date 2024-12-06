@@ -4,50 +4,26 @@ This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
 <template>
   <BContainer class="my-5">
-    <FrHeader
-      class="mb-4"
-      :title="$t('governance.delegates.title')"
-      :subtitle="$t('governance.delegates.subtitle')" />
+    <FrHeader class="mb-4" :title="$t('governance.delegates.title')" :subtitle="$t('governance.delegates.subtitle')" />
     <BCard no-body>
       <BCardHeader class="p-0">
-        <div :class="`btn-toolbar ${hasIDMUsersViewPrivilege ? 'justify-content-between' : 'justify-content-end'} p-3 border-bottom-0`">
-          <BButton
-            v-if="hasIDMUsersViewPrivilege"
-            @click="showAddModal"
-            data-testid="add-delegate"
-            variant="primary">
-            <FrIcon
-              icon-class="mr-2"
-              name="add">
+        <div
+          :class="`btn-toolbar ${hasIDMUsersViewPrivilege ? 'justify-content-between' : 'justify-content-end'} p-3 border-bottom-0`">
+          <BButton v-if="hasIDMUsersViewPrivilege" @click="showAddModal" data-testid="add-delegate" variant="primary">
+            <FrIcon icon-class="mr-2" name="add">
               {{ $t('governance.delegates.addDelegates') }}
             </FrIcon>
           </BButton>
-          <FrSearchInput
-            v-model="searchQuery"
-            data-testid="search-delegate"
-            :placeholder="$t('common.search')"
-            @clear="clear"
-            @search="paginationPage = 1; loadData()" />
+          <FrSearchInput v-model="searchQuery" data-testid="search-delegate" :placeholder="$t('common.search')"
+            @clear="clear" @search="paginationPage = 1; loadData()" />
         </div>
       </BCardHeader>
-      <BTable
-        v-if="items.length"
-        id="delegate-table"
-        data-testid="delegate-table"
-        @sort-changed="sortChanged"
-        hover
-        responsive
-        :fields="fields"
-        :items="items">
+      <BTable v-if="items.length" id="delegate-table" data-testid="delegate-table" @sort-changed="sortChanged" hover
+        responsive :fields="fields" :items="items">
         <template #cell(user)="{ item }">
           <BMedia no-body>
             <BMediaAside vertical-align="center">
-              <BImg
-                class="rounded-circle"
-                height="36"
-                width="36"
-                :alt="item.givenName"
-                :aria-hidden="true"
+              <BImg class="rounded-circle" height="36" width="36" :alt="item.givenName" :aria-hidden="true"
                 :src="item.profileImage || require('@forgerock/platform-shared/src/assets/images/avatar.png')" />
             </BMediaAside>
             <BMediaBody class="text-truncate">
@@ -61,17 +37,10 @@ of the MIT license. See the LICENSE file for details. -->
           </BMedia>
         </template>
         <template #cell(edit)="{ item }">
-          <FrActionsCell
-            :delete-option="false"
-            :edit-option="false"
-            :divider="false">
+          <FrActionsCell :delete-option="false" :edit-option="false" :divider="false">
             <template #custom-top-actions>
-              <BDropdownItem
-                data-testid="remove-delegate"
-                @click="showRemoveDelegateModal(item)">
-                <FrIcon
-                  icon-class="mr-2"
-                  name="delete">
+              <BDropdownItem data-testid="remove-delegate" @click="showRemoveDelegateModal(item)">
+                <FrIcon icon-class="mr-2" name="delete">
                   {{ $t('common.remove') }}
                 </FrIcon>
               </BDropdownItem>
@@ -79,33 +48,28 @@ of the MIT license. See the LICENSE file for details. -->
           </FrActionsCell>
         </template>
       </BTable>
-      <FrNoData
-        v-else
-        :card="false"
-        class="mb-4"
-        data-testid="delegates-no-data"
-        icon="inbox"
+      <FrNoData v-else :card="false" class="mb-4" data-testid="delegates-no-data" icon="inbox"
         :subtitle="$t('governance.delegates.noDelegates')" />
-      <FrPagination
-        v-model="paginationPage"
-        aria-controls="delegate-table"
-        :last-page="isLast"
-        :per-page="paginationPageSize"
-        @input="pageChange"
-        @on-page-size-change="pageSizeChange"
-      />
+      <FrPagination v-model="paginationPage" aria-controls="delegate-table" :last-page="isLast"
+        :per-page="paginationPageSize" @input="pageChange" @on-page-size-change="pageSizeChange" />
     </BCard>
-    <FrAddDelegateModal
-      v-if="hasIDMUsersViewPrivilege"
-      @delegate-added="loadData()" />
-    <FrDeleteModal
-      @delete-item="removeDelegate()"
-      translated-item-type="delegate"
-      id="delegate-delete-modal" />
+    <FrAddDelegateModal v-if="hasIDMUsersViewPrivilege" @delegate-added="loadData()" />
+    <FrDeleteModal @delete-item="removeDelegate()" translated-item-type="delegate" id="delegate-delete-modal" />
   </BContainer>
 </template>
 
 <script>
+import { deleteTaskProxy, getTaskProxies } from '@/api/governance/DirectoryApi';
+import FrActionsCell from '@forgerock/platform-shared/src/components/cells/ActionsCell';
+import FrDeleteModal from '@forgerock/platform-shared/src/components/DeleteModal';
+import FrIcon from '@forgerock/platform-shared/src/components/Icon';
+import FrNoData from '@forgerock/platform-shared/src/components/NoData';
+import FrHeader from '@forgerock/platform-shared/src/components/PageHeader';
+import FrPagination from '@forgerock/platform-shared/src/components/Pagination';
+import FrSearchInput from '@forgerock/platform-shared/src/components/SearchInput';
+import DateMixin from '@forgerock/platform-shared/src/mixins/DateMixin';
+import NotificationMixin from '@forgerock/platform-shared/src/mixins/NotificationMixin';
+import { useUserStore } from '@forgerock/platform-shared/src/stores/user';
 import {
   BButton,
   BCard,
@@ -119,17 +83,6 @@ import {
   BTable,
 } from 'bootstrap-vue';
 import { mapState } from 'pinia';
-import { useUserStore } from '@forgerock/platform-shared/src/stores/user';
-import FrActionsCell from '@forgerock/platform-shared/src/components/cells/ActionsCell';
-import FrDeleteModal from '@forgerock/platform-shared/src/components/DeleteModal';
-import FrHeader from '@forgerock/platform-shared/src/components/PageHeader';
-import FrIcon from '@forgerock/platform-shared/src/components/Icon';
-import FrNoData from '@forgerock/platform-shared/src/components/NoData';
-import FrPagination from '@forgerock/platform-shared/src/components/Pagination';
-import FrSearchInput from '@forgerock/platform-shared/src/components/SearchInput';
-import DateMixin from '@forgerock/platform-shared/src/mixins/DateMixin';
-import NotificationMixin from '@forgerock/platform-shared/src/mixins/NotificationMixin';
-import { getTaskProxies, deleteTaskProxy } from '@/api/governance/DirectoryApi';
 import FrAddDelegateModal from './AddDelegateModal';
 
 export default {
@@ -281,7 +234,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-:deep {
+:deep() {
   .w-96px {
     width: 96px;
   }

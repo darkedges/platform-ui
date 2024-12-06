@@ -3,45 +3,22 @@
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
 <template>
-  <VueDraggableResizable
-    class="fr-panel position-relative h-100"
-    class-name-handle="fr-handle"
-    prevent-deactivation
-    :class="{ open }"
-    :draggable="false"
-    :handles="handles"
-    :max-width="maxWidth"
-    :min-width="minWidth"
-    :w="calculatedWidth"
-    :active="open"
-    :resizable="resizable"
-    @resizing="onResize">
-    <BCard
-      class="w-100 h-100 p-0 rounded-0 overflow-auto"
-      no-body>
+  <VueDraggableResizable class="fr-panel position-relative h-100" class-name-handle="fr-handle" prevent-deactivation
+    :class="{ open }" :draggable="false" :handles="handles" :max-width="maxWidth" :min-width="minWidth"
+    :w="calculatedWidth" :active="open" :resizable="resizable" @resizing="onResize">
+    <BCard class="w-100 h-100 p-0 rounded-0 overflow-auto" no-body>
       <div class="d-flex px-4 w-100 align-items-center justify-content-between">
-        <div
-          v-if="title"
-          class="d-flex py-3 align-items-center">
+        <div v-if="title" class="d-flex py-3 align-items-center">
           <h2 class="h5 mb-0 py-3">
             {{ title }}
           </h2>
         </div>
         <div class="d-flex border-0 px-0 py-3 align-items-center">
-          <BButtonClose
-            class="text-dark"
-            variant="none"
-            :id="`btnClose-${closeButtonId}`"
-            :aria-label="closeButtonTooltip"
-            @click="$emit('toggle-sidebar')">
-            <FrIcon
-              icon-class="md-24"
-              name="close" />
+          <BButtonClose class="text-dark" variant="none" :id="`btnClose-${closeButtonId}`"
+            :aria-label="closeButtonTooltip" @click="$emit('toggle-sidebar')">
+            <FrIcon icon-class="md-24" name="close" />
           </BButtonClose>
-          <BTooltip
-            triggers="hover"
-            placement="bottom"
-            :target="`btnClose-${closeButtonId}`">
+          <BTooltip triggers="hover" placement="bottom" :target="`btnClose-${closeButtonId}`">
             {{ closeButtonTooltip }}
           </BTooltip>
         </div>
@@ -52,15 +29,15 @@ of the MIT license. See the LICENSE file for details. -->
 </template>
 
 <script setup>
+import i18n from '@/i18n';
 import { BButtonClose, BCard, BTooltip } from 'bootstrap-vue';
-import VueDraggableResizable from 'vue-draggable-resizable';
-import { ref, computed } from 'vue';
 import uuid from 'uuid/v4';
+import { computed, ref } from 'vue';
+import VueDraggableResizable from 'vue-draggable-resizable';
 import FrIcon from '../Icon';
 import {
   EDITOR_LAYOUT_SIDEBAR_DEFAULT_MAX_WIDTH, EDITOR_LAYOUT_SIDEBAR_DEFAULT_MIN_WIDTH, EDITOR_LAYOUT_SIDEBAR_DEFAULT_WIDTH, EDITOR_LAYOUT_SIDEBAR_POSITION,
 } from './Utils/constants';
-import i18n from '@/i18n';
 
 /**
  * Sidebar component for the editor layout
@@ -135,7 +112,7 @@ function onResize(_, __, resizeWidth) {
   }
 }
 
-:deep {
+:deep() {
   .fr-handle {
     box-sizing: border-box;
     position: absolute;

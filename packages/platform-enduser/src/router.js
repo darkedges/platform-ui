@@ -5,10 +5,10 @@
  * of the MIT license. See the LICENSE file for details.
  */
 
-import { createRouter, createWebHashHistory } from 'vue-router';
-import checkIfRouteCanBeAccessed from '@forgerock/platform-shared/src/utils/routerGuard';
-import i18n from './i18n';
 import store from '@/store';
+import checkIfRouteCanBeAccessed from '@forgerock/platform-shared/src/utils/routerGuard';
+import { createRouter, createWebHashHistory } from 'vue-router';
+import i18n from './i18n';
 
 function configureRouterHistory() {
   // '&loggedin=true' parameter in the url causes Vue Router to calculate routes incorrectly, as it interprets the parameter as part of the hash.

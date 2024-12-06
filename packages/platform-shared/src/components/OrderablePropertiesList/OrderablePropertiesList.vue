@@ -4,49 +4,31 @@ This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
 <template>
   <div>
-    <div
-      v-if="properties.length === 0"
-      class="text-center mt-2 mb-4 pt-3 pb-4">
-      <FrIcon
-        icon-class="md-96 text-secondary opacity-20 mb-4"
-        name="list" />
+    <div v-if="properties.length === 0" class="text-center mt-2 mb-4 pt-3 pb-4">
+      <FrIcon icon-class="md-96 text-secondary opacity-20 mb-4" name="list" />
       <h3 class="h4">
         {{ $t('orderablePropertiesList.noPropertiesDefined') }}
       </h3>
       <p class="mb-5">
         {{ $t('orderablePropertiesList.noPropertiesDefinedSubtitle') }}
       </p>
-      <BButton
-        variant="primary"
-        @click="$emit('show-add-modal');">
-        <FrIcon
-          icon-class="mr-2"
-          name="add">
+      <BButton variant="primary" @click="$emit('show-add-modal');">
+        <FrIcon icon-class="mr-2" name="add">
           {{ $t('orderablePropertiesList.addProperty') }}
         </FrIcon>
       </BButton>
     </div>
     <template v-else>
-      <BButtonToolbar
-        class="py-3 px-4">
+      <BButtonToolbar class="py-3 px-4">
         <div class="align-items-center">
-          <BButton
-            variant="primary"
-            data-testid="btn-add-property"
-            @click="$emit('show-add-modal');">
-            <FrIcon
-              icon-class="mr-2"
-              name="add">
+          <BButton variant="primary" data-testid="btn-add-property" @click="$emit('show-add-modal');">
+            <FrIcon icon-class="mr-2" name="add">
               {{ $t('orderablePropertiesList.addProperty') }}
             </FrIcon>
           </BButton>
         </div>
       </BButtonToolbar>
-      <BTableSimple
-        hover
-        class="mb-0"
-        tbody-tr-class="cursor-pointer"
-        responsive>
+      <BTableSimple hover class="mb-0" tbody-tr-class="cursor-pointer" responsive>
         <BThead>
           <BTr>
             <BTh class="w-100px pr-0">
@@ -66,25 +48,13 @@ of the MIT license. See the LICENSE file for details. -->
             <BTh class="col-width-15" />
           </BTr>
         </BThead>
-        <Draggable
-          id="properties-table"
-          tag="tbody"
-          v-model="orderedProperties"
-          chosen-class="chosen-item"
-          drag-class="drag-item"
-          ghost-class="ghost-item"
-          @end="onRowChange"
-          item-key="name">
+        <Draggable id="properties-table" tag="tbody" v-model="orderedProperties" chosen-class="chosen-item"
+          drag-class="drag-item" ghost-class="ghost-item" @end="onRowChange" item-key="name">
           <template #item="{ element }">
-            <BTr
-              class="cursor-pointer"
-              :id="element.name || element.title"
-              :key="element.name || element.title"
+            <BTr class="cursor-pointer" :id="element.name || element.title" :key="element.name || element.title"
               @click="$emit('show-edit-modal', element)">
               <BTd>
-                <FrIcon
-                  icon-class="text-dark p-1 cursor-drag mr-2"
-                  name="drag_indicator">
+                <FrIcon icon-class="text-dark p-1 cursor-drag mr-2" name="drag_indicator">
                   {{ element.order + 1 }}
                 </FrIcon>
               </BTd>
@@ -100,47 +70,29 @@ of the MIT license. See the LICENSE file for details. -->
                 {{ element.type && element.type.toLowerCase() }}
               </BTd>
               <BTd class="required-cell">
-                <BBadge
-                  v-if="element.required"
-                  variant="success">
+                <BBadge v-if="element.required" variant="success">
                   {{ $t('common.required') }}
                 </BBadge>
               </BTd>
               <BTd>
-                <FrActionsCell
-                  class="py-2"
-                  :edit-option="false"
-                  :delete-option="false"
-                  :divider="false"
+                <FrActionsCell class="py-2" :edit-option="false" :delete-option="false" :divider="false"
                   :test-id="`property-${element.order}`">
                   <template #custom-top-actions>
-                    <BDropdownItem
-                      v-if="element.order !== 0"
-                      @click.stop="moveProperty(element.order, element.order - 1)"
-                      data-testid="move-up-btn">
-                      <FrIcon
-                        icon-class="mr-2"
-                        name="arrow_upward">
+                    <BDropdownItem v-if="element.order !== 0"
+                      @click.stop="moveProperty(element.order, element.order - 1)" data-testid="move-up-btn">
+                      <FrIcon icon-class="mr-2" name="arrow_upward">
                         {{ $t('orderablePropertiesList.moveUp') }}
                       </FrIcon>
                     </Bdropdownitem>
-                    <BDropdownItem
-                      v-if="element.order !== (orderedProperties.length - 1)"
-                      @click.stop="moveProperty(element.order, element.order + 1)"
-                      data-testid="move-down-btn">
-                      <FrIcon
-                        icon-class="mr-2"
-                        name="arrow_downward">
+                    <BDropdownItem v-if="element.order !== (orderedProperties.length - 1)"
+                      @click.stop="moveProperty(element.order, element.order + 1)" data-testid="move-down-btn">
+                      <FrIcon icon-class="mr-2" name="arrow_downward">
                         {{ $t('orderablePropertiesList.moveDown') }}
                       </FrIcon>
                     </Bdropdownitem>
                     <BDropdownDivider />
-                    <BDropdownItem
-                      @click.stop="$emit('remove-property', element);"
-                      data-testid="remove-btn">
-                      <FrIcon
-                        icon-class="mr-2"
-                        name="delete">
+                    <BDropdownItem @click.stop="$emit('remove-property', element);" data-testid="remove-btn">
+                      <FrIcon icon-class="mr-2" name="delete">
                         {{ $t('common.remove') }}
                       </FrIcon>
                     </Bdropdownitem>
@@ -161,25 +113,25 @@ of the MIT license. See the LICENSE file for details. -->
  * Table that contains properties for an object type.
  * Supports add, edit, and delete
  */
+import FrActionsCell from '@forgerock/platform-shared/src/components/cells/ActionsCell';
+import FrIcon from '@forgerock/platform-shared/src/components/Icon';
 import {
   BBadge,
   BButton,
-  BDropdownItem,
-  BDropdownDivider,
   BButtonToolbar,
+  BDropdownDivider,
+  BDropdownItem,
   BTableSimple,
   BTd,
-  BThead,
   BTh,
+  BThead,
   BTr,
 } from 'bootstrap-vue';
-import Draggable from 'vuedraggable';
-import FrActionsCell from '@forgerock/platform-shared/src/components/cells/ActionsCell';
-import FrIcon from '@forgerock/platform-shared/src/components/Icon';
 import {
   ref,
   watch,
 } from 'vue';
+import Draggable from 'vuedraggable';
 
 Draggable.compatConfig = { MODE: 3 };
 
@@ -266,7 +218,7 @@ orderTable();
 </script>
 
 <style lang="scss" scoped>
-:deep {
+:deep() {
   .col-width-15 {
     width: 15%;
   }
@@ -289,7 +241,8 @@ orderTable();
     }
 
     .cursor-drag {
-      cursor: move; /* fallback if grab cursor is unsupported */
+      cursor: move;
+      /* fallback if grab cursor is unsupported */
       cursor: grab;
       cursor: -moz-grab;
       cursor: -webkit-grab;
@@ -299,7 +252,7 @@ orderTable();
       text-transform: capitalize;
     }
 
-    .required-cell .badge{
+    .required-cell .badge {
       width: 100px;
     }
   }

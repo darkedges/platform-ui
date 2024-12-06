@@ -3,36 +3,19 @@
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
 <template>
-  <BModal
-    :id="modalId"
-    :ok-title="$t('common.done')"
-    :title="$t('governance.certificationTask.lineItemActivityModal.title')"
-    @hidden="$emit('close-modal')"
-    body-class="pb-0"
-    content-class="border-0"
-    no-close-on-backdrop
-    no-close-on-esc
-    ok-only
-    ok-variant="outline-primary"
-    scrollable
-    size="lg">
+  <BModal :id="modalId" :ok-title="$t('common.done')"
+    :title="$t('governance.certificationTask.lineItemActivityModal.title')" @hidden="$emit('close-modal')"
+    body-class="pb-0" content-class="border-0" no-close-on-backdrop no-close-on-esc ok-only ok-variant="outline-primary"
+    scrollable size="lg">
     <div v-if="activity.length">
       <!-- Activity list -->
-      <BTable
-        :current-page="currentPage"
-        :fields="fields"
-        :items="activity"
-        :per-page="itemsPerPage"
-        borderless
-        class="mb-0"
-        thead-class="d-none">
+      <BTable :current-page="currentPage" :fields="fields" :items="activity" :per-page="itemsPerPage" borderless
+        class="mb-0" thead-class="d-none">
         <!-- Icon -->
         <template #cell(icon)="{ item }">
           <div class="d-flex flex-column mr-4 position-absolute h-100 activity-icon">
             <div class="rounded-circle bg-light d-flex align-items-center justify-content-center py-2">
-              <FrIcon
-                :name="getIcon(item.action)"
-                icon-class="md-18" />
+              <FrIcon :name="getIcon(item.action)" icon-class="md-18" />
             </div>
             <div class="thread-line flex-grow-1 my-2" />
           </div>
@@ -41,13 +24,8 @@ of the MIT license. See the LICENSE file for details. -->
         <!-- Item -->
         <template #cell(activity)="{ item }">
           <BMediaBody class="my-2 pr-5 border-bottom">
-            <BMedia
-              class="align-items-center mb-2"
-              no-body>
-              <BImg
-                class="mr-3 rounded-circle"
-                height="16"
-                width="16"
+            <BMedia class="align-items-center mb-2" no-body>
+              <BImg class="mr-3 rounded-circle" height="16" width="16"
                 :alt="$t('common.userFullName', { givenName: item.user.givenName, sn: item.user.sn })"
                 :src="item.user.profileImage || require('@forgerock/platform-shared/src/assets/images/avatar.png')"
                 fluid />
@@ -77,25 +55,18 @@ of the MIT license. See the LICENSE file for details. -->
       </BTable>
 
       <!-- Pagination -->
-      <FrPagination
-        v-model="currentPage"
-        boundary="scrollParent"
-        hide-border
-        :per-page="itemsPerPage"
-        :total-rows="activity.length"
-        @on-page-size-change="updatePageSize" />
+      <FrPagination v-model="currentPage" boundary="scrollParent" hide-border :per-page="itemsPerPage"
+        :total-rows="activity.length" @on-page-size-change="updatePageSize" />
     </div>
-    <FrNoData
-      v-else
-      :card="false"
-      class="mb-4"
-      icon="inbox"
+    <FrNoData v-else :card="false" class="mb-4" icon="inbox"
       :subtitle="$t('governance.certificationTask.lineItemActivityModal.noActivity')" />
   </BModal>
 </template>
 
 <script setup>
-import dayjs from 'dayjs';
+import FrIcon from '@forgerock/platform-shared/src/components/Icon';
+import FrNoData from '@forgerock/platform-shared/src/components/NoData';
+import FrPagination from '@forgerock/platform-shared/src/components/Pagination';
 import {
   BImg,
   BMedia,
@@ -103,10 +74,8 @@ import {
   BModal,
   BTable,
 } from 'bootstrap-vue';
+import dayjs from 'dayjs';
 import { ref } from 'vue';
-import FrIcon from '@forgerock/platform-shared/src/components/Icon';
-import FrNoData from '@forgerock/platform-shared/src/components/NoData';
-import FrPagination from '@forgerock/platform-shared/src/components/Pagination';
 
 /**
  * Activity icons
@@ -202,13 +171,13 @@ function getIcon(action) {
   }
 }
 
-:deep {
+:deep() {
   .modal-body {
     min-height: 200px;
   }
 
   .column {
-    padding:0;
+    padding: 0;
   }
 
   .icon-column {

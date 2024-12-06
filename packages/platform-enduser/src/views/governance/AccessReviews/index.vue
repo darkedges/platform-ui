@@ -7,37 +7,24 @@ of the MIT license. See the LICENSE file for details. -->
     <template v-if="tableLoading">
       <FrSpinner class="py-5" />
     </template>
-    <div
-      v-else
-      class="my-5">
-      <FrHeader
-        :title="$t('pages.accessReview.title')"
-        :subtitle="$t('pages.accessReview.subTitle')" />
+    <div v-else class="my-5">
+      <FrHeader :title="$t('pages.accessReview.title')" :subtitle="$t('pages.accessReview.subTitle')" />
       <BCard no-body>
         <BCardHeader class="p-0">
           <div class="btn-toolbar justify-content-between p-3 border-bottom-0">
             <div>
-              <BDropdown
-                id="dropdown-status"
-                variant="link"
-                class="m-md-2 text-decoration-none">
+              <BDropdown id="dropdown-status" variant="link" class="m-md-2 text-decoration-none">
                 <template #button-content>
-                  <span
-                    class="font-weight-bold mr-1"
-                  >
+                  <span class="font-weight-bold mr-1">
                     {{ `${$t('common.status')}:` }}
                   </span>
                   <span>{{ statusSort.text }}</span>
                 </template>
                 <template v-for="([key, statusObj]) in Array.from(statuses)">
-                  <BDropdownItem
-                    :key="key"
-                    v-if="!statusObj.sortHide && !statusObj.sortAccessReviewHide"
-                    @click="handleStatusSort(statusObj)"
-                  >
+                  <BDropdownItem :key="key" v-if="!statusObj.sortHide && !statusObj.sortAccessReviewHide"
+                    @click="handleStatusSort(statusObj)">
                     <span
-                      :class="[{'pl-3': (statusObj.type !== statuses.get('closed').type && statusObj.type !== statuses.get('in-progress').type)}]"
-                    >
+                      :class="[{ 'pl-3': (statusObj.type !== statuses.get('closed').type && statusObj.type !== statuses.get('in-progress').type) }]">
                       {{ statusObj.text }}
                     </span>
                   </BDropdownItem>
@@ -51,20 +38,10 @@ of the MIT license. See the LICENSE file for details. -->
               @search="search" /> -->
           </div>
         </BCardHeader>
-        <BTable
-          v-if="accessReviewList.length"
-          class="mb-0"
-          hover
-          responsive
-          tbody-tr-class="cursor-pointer"
-          primary-key="id"
-          :fields="fields"
-          :items="accessReviewList"
-          @row-clicked="viewApplicationDetails">
+        <BTable v-if="accessReviewList.length" class="mb-0" hover responsive tbody-tr-class="cursor-pointer"
+          primary-key="id" :fields="fields" :items="accessReviewList" @row-clicked="viewApplicationDetails">
           <template #cell(name)="{ item }">
-            <BMedia
-              class="align-items-center"
-              no-body>
+            <BMedia class="align-items-center" no-body>
               <div class="media-body align-self-center">
                 <h5 class="m-0">
                   {{ item.campaignName || item.name }}
@@ -77,62 +54,53 @@ of the MIT license. See the LICENSE file for details. -->
           </template>
           <template #cell(status)="{ item }">
             <template v-if="item && item.status">
-              <BBadge
-                class="w-100"
-                :variant="statuses.get(item.status).variant">
+              <BBadge class="w-100" :variant="statuses.get(item.status).variant">
                 {{ $t(`pages.accessReview.status.${item.status.toLowerCase()}`) }}
               </BBadge>
             </template>
           </template>
           <template #cell(progress)="{ item }">
-            <FrCircleProgressBar
-              :id="`taskProgress${item.id}`"
-              :progress="progressPercentage(item.progress)"
-              :thickness="6"
-              :empty-thickness="6"
-              :empty-color="styles.brightGray"
-              :size="50">
+            <FrCircleProgressBar :id="`taskProgress${item.id}`" :progress="progressPercentage(item.progress)"
+              :thickness="6" :empty-thickness="6" :empty-color="styles.brightGray" :size="50">
               <template #count="{ count }">
                 <small class="font-weight-bold mb-0">
                   {{ count.currentValue }}%
                 </small>
               </template>
             </FrCircleProgressBar>
-            <BPopover
-              triggers="hover"
-              boundary="window"
-              placement="top"
-              :target="`taskProgress${item.id}`">
+            <BPopover triggers="hover" boundary="window" placement="top" :target="`taskProgress${item.id}`">
               <div class="p-1">
                 <h5 class="mb-1">
-                  {{ $t('pages.accessReview.taskPopoverCompletedText', { percentage: progressPercentage(item.progress) }) }}
+                  {{ $t('pages.accessReview.taskPopoverCompletedText', {
+                    percentage: progressPercentage(item.progress)
+                  }) }}
                 </h5>
-                {{ $t('pages.accessReview.taskPopoverItemsCompletedText', { completed: item.totals.completed, total: item.totals.total }) }}
+                {{ $t('pages.accessReview.taskPopoverItemsCompletedText', {
+                  completed: item.totals.completed, total:
+                    item.totals.total }) }}
               </div>
             </BPopover>
           </template>
         </BTable>
-        <FrNoData
-          v-else
-          :card="false"
-          class="mb-4"
-          data-testid="access-review-no-data"
-          icon="inbox"
+        <FrNoData v-else :card="false" class="mb-4" data-testid="access-review-no-data" icon="inbox"
           :subtitle="$t('governance.certificationTask.noAccessReview', { type: statusSort.text })" />
-        <BPagination
-          v-if="totalRows > 10"
-          :value="currentPage"
-          class="pt-3 justify-content-center pagination-material-buttons border-top"
-          per-page="10"
-          :total-rows="totalRows"
-          @input="paginationChange" />
+        <BPagination v-if="totalRows > 10" :value="currentPage"
+          class="pt-3 justify-content-center pagination-material-buttons border-top" per-page="10"
+          :total-rows="totalRows" @input="paginationChange" />
       </BCard>
     </div>
   </BContainer>
 </template>
 
 <script>
-import { mapState } from 'pinia';
+import {
+  forwardCertification,
+  getCertificationItems,
+  searchCertificates,
+} from '@forgerock/platform-shared/src/api/governance/CertificationApi';
+import FrCircleProgressBar from '@forgerock/platform-shared/src/components/CircleProgressBar';
+import FrHeader from '@forgerock/platform-shared/src/components/PageHeader';
+import NotificationMixin from '@forgerock/platform-shared/src/mixins/NotificationMixin';
 import { useUserStore } from '@forgerock/platform-shared/src/stores/user';
 import {
   BBadge,
@@ -146,19 +114,12 @@ import {
   BPopover,
   BTable,
 } from 'bootstrap-vue';
-import {
-  getCertificationItems,
-  searchCertificates,
-  forwardCertification,
-} from '@forgerock/platform-shared/src/api/governance/CertificationApi';
-import NotificationMixin from '@forgerock/platform-shared/src/mixins/NotificationMixin';
-import FrCircleProgressBar from '@forgerock/platform-shared/src/components/CircleProgressBar';
-import FrHeader from '@forgerock/platform-shared/src/components/PageHeader';
+import { mapState } from 'pinia';
 // import FrSearchInput from '@forgerock/platform-shared/src/components/SearchInput';
+import styles from '@/scss/main.scss';
 import FrNoData from '@forgerock/platform-shared/src/components/NoData';
 import FrSpinner from '@forgerock/platform-shared/src/components/Spinner';
 import CertificationMixin from '@forgerock/platform-shared/src/mixins/Governance/Certification';
-import styles from '@/scss/main.scss';
 
 export default {
   name: 'AccessReviews',
@@ -283,11 +244,13 @@ export default {
     padding-right: 0;
   }
 }
-:deep {
+
+:deep() {
   .w-140px {
     width: 140px;
   }
- .w-96px {
+
+  .w-96px {
     width: 96px;
   }
 }

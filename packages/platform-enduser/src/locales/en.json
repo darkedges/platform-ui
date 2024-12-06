@@ -200,7 +200,7 @@
     }
   },
   "sideMenu": {
-    "accessReviews":"Access Reviews",
+    "accessReviews": "Access Reviews",
     "accounts": "Accounts",
     "applications": "My Applications",
     "approvals": "Approvals",
@@ -211,6 +211,7 @@
     "inbox": "Inbox",
     "myAccess": "My Access",
     "profile": "Profile",
+    "tdifdocuments": "TDIF Documents",
     "reports": "Reports",
     "requests": "My Requests",
     "roles": "Roles",
@@ -331,7 +332,7 @@
         "results": "{totalCount} Result | {totalCount} Results",
         "role": "role",
         "showIf": "Show if",
-        "sodViolation" : {
+        "sodViolation": {
           "violationMessage": "Granting access to these entitlement(s) will result in a Segregation of Duties (SoD) violation",
           "modalTitle": "Violations Found",
           "modalDescription": "The following violations were found when attempting to submit the request.",
@@ -349,7 +350,7 @@
       "requestId": "Request ID",
       "requestType": "Request Type"
     },
-    "approval":{
+    "approval": {
       "subtitle": "View and take action on your pending access requests.",
       "errorGettingApprovals": "Error getting user approvals",
       "errorGettingPendingApprovals": "Error getting pending approvals number",

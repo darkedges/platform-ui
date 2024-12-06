@@ -4,44 +4,23 @@ This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
 <template>
   <div>
-    <FrField
-      :value="password.value"
-      @input="password.value = $event; updateCallback($event)"
-      type="password"
-      :errors="failuresForField"
-      :label="password.label"
-      :floating-label="floatingLabel"
-      :describedby-id="`policy_panel_${index}`"
-      :autofocus="autofocus"
-      :is-required-aria="true"
-      :aria-invalid="!!failuresForField.length || !!failuresForPanel.length"
-      @focused="touched = true;"
+    <FrField :value="password.value" @input="password.value = $event; updateCallback($event)" type="password"
+      :errors="failuresForField" :label="password.label" :floating-label="floatingLabel"
+      :describedby-id="`policy_panel_${index}`" :autofocus="autofocus" :is-required-aria="true"
+      :aria-invalid="!!failuresForField.length || !!failuresForPanel.length" @focused="touched = true;"
       @blur="lostFocus = true;" />
-    <FrPolicyPanel
-      class="mt-2"
-      :display-danger-style="lostFocus"
-      :num-columns="1"
-      :policies="policies"
-      :policy-display-checkmark="policyDisplayCheckmark"
-      :policy-failures="failuresForPanel"
-      :value-entered="!!password.value"
-      :policy-panel-id="`policy_panel_${index}`"
-      :touched="touched"
-    />
-    <FrField
-      v-if="confirmPassword"
-      :value="confirmPasswordText"
-      @input="confirmPasswordText = $event; checkConfirmPasswordMatch()"
-      type="password"
-      :errors="confirmPasswordFailures"
-      :label="$t('login.password.confirmPassword')"
-      :floating-label="floatingLabel"
+    <FrPolicyPanel class="mt-2" :display-danger-style="lostFocus" :num-columns="1" :policies="policies"
+      :policy-display-checkmark="policyDisplayCheckmark" :policy-failures="failuresForPanel"
+      :value-entered="!!password.value" :policy-panel-id="`policy_panel_${index}`" :touched="touched" />
+    <FrField v-if="confirmPassword" :value="confirmPasswordText"
+      @input="confirmPasswordText = $event; checkConfirmPasswordMatch()" type="password"
+      :errors="confirmPasswordFailures" :label="$t('login.password.confirmPassword')" :floating-label="floatingLabel"
       :is-required-aria="true" />
   </div>
 </template>
 
 <script>
-import { FRAuth, CallbackType } from '@forgerock/javascript-sdk';
+import { CallbackType, FRAuth } from '@forgerock/javascript-sdk';
 import FrField from '@forgerock/platform-shared/src/components/Field';
 import PolicyPanel from '@forgerock/platform-shared/src/components/PolicyPanel';
 import PasswordPolicyMixin from '@forgerock/platform-shared/src/mixins/PasswordPolicyMixin';
@@ -195,8 +174,8 @@ export default {
           this.setFailingPolicies(failures);
 
           this.$emit('update-auth-id', step2.payload.authId);
-        }).catch(() => {});
-      }).catch(() => {});
+        }).catch(() => { });
+      }).catch(() => { });
     },
     /**
      * Sets required policies for PolicyPanel component
@@ -300,7 +279,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-:deep {
+:deep() {
   li {
     text-align: left;
   }

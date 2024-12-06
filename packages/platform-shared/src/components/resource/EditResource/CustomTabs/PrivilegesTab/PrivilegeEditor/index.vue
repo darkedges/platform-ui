@@ -4,25 +4,13 @@ This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
 <template>
   <div class="overflow-auto">
-    <BTable
-      class="p-0 mb-0"
-      no-border
-      show-empty
-      :empty-text="$t('common.noRecordsToShow')"
-      ref="permissionsGrid"
-      :fields="permissionsColumns"
-      :items="permissions"
-      :thead-class="[{'d-none': !showHeader}]"
+    <BTable class="p-0 mb-0" no-border show-empty :empty-text="$t('common.noRecordsToShow')" ref="permissionsGrid"
+      :fields="permissionsColumns" :items="permissions" :thead-class="[{ 'd-none': !showHeader }]"
       :no-local-sorting="true">
       <template #cell(identityObject)="data">
-        <slot
-          name="identityObject"
-          :item="data">
-          <div
-            class="py-2 d-flex"
-            @click="showAdvanced = !showAdvanced">
-            <FrIcon
-              :icon-class="`${error ? 'color-red' : ''} mr-3 align-self-center cursor-pointer`"
+        <slot name="identityObject" :item="data">
+          <div class="py-2 d-flex" @click="showAdvanced = !showAdvanced">
+            <FrIcon :icon-class="`${error ? 'color-red' : ''} mr-3 align-self-center cursor-pointer`"
               :name="error ? 'info' : identityObjectSchema['mat-icon'] || 'settings_system_daydream'" />
             <span class="mw-100">
               <div class="text-truncate">
@@ -36,53 +24,33 @@ of the MIT license. See the LICENSE file for details. -->
         </slot>
       </template>
       <template #cell(view)="data">
-        <slot
-          name="view"
-          :item="data">
+        <slot name="view" :item="data">
           <div>
-            <BFormCheckbox
-              v-model="data.item.view"
-              :aria-label="data.field.label"
-              :disabled="disabled"
+            <BFormCheckbox v-model="data.item.view" :aria-label="data.field.label" :disabled="disabled"
               @change="togglePermission('view')" />
           </div>
         </slot>
       </template>
       <template #cell(create)="data">
-        <slot
-          name="create"
-          :item="data">
+        <slot name="create" :item="data">
           <div>
-            <BFormCheckbox
-              v-model="data.item.create"
-              :aria-label="data.field.label"
-              :disabled="disabled"
+            <BFormCheckbox v-model="data.item.create" :aria-label="data.field.label" :disabled="disabled"
               @change="togglePermission('create')" />
           </div>
         </slot>
       </template>
       <template #cell(update)="data">
-        <slot
-          name="update"
-          :item="data">
+        <slot name="update" :item="data">
           <div>
-            <BFormCheckbox
-              v-model="data.item.update"
-              :aria-label="data.field.label"
-              :disabled="disabled"
+            <BFormCheckbox v-model="data.item.update" :aria-label="data.field.label" :disabled="disabled"
               @change="togglePermission('update')" />
           </div>
         </slot>
       </template>
       <template #cell(delete)="data">
-        <slot
-          name="delete"
-          :item="data">
+        <slot name="delete" :item="data">
           <div>
-            <BFormCheckbox
-              v-model="data.item.delete"
-              :aria-label="data.field.label"
-              :disabled="disabled"
+            <BFormCheckbox v-model="data.item.delete" :aria-label="data.field.label" :disabled="disabled"
               @change="togglePermission('delete')" />
           </div>
         </slot>
@@ -91,21 +59,12 @@ of the MIT license. See the LICENSE file for details. -->
         <slot name="actions">
           <div class="actions">
             <small class="text-nowrap">
-              <BButton
-                variant="link"
-                class="p-0 mr-3"
-                @click="showAdvanced = !showAdvanced">
+              <BButton variant="link" class="p-0 mr-3" @click="showAdvanced = !showAdvanced">
                 {{ showAdvanced ? $t('pages.access.hideAdvanced') : $t('pages.access.showAdvanced') }}
               </BButton>
-              <BButton
-                v-if="showDelete"
-                :aria-label="$t('common.delete')"
-                variant="none"
-                class="p-0"
+              <BButton v-if="showDelete" :aria-label="$t('common.delete')" variant="none" class="p-0"
                 @click="$emit('remove-privilege', index)">
-                <FrIcon
-                  icon-class="text-muted"
-                  name="delete" />
+                <FrIcon icon-class="text-muted" name="delete" />
               </BButton>
             </small>
           </div>
@@ -113,26 +72,16 @@ of the MIT license. See the LICENSE file for details. -->
       </template>
       <template #row-details>
         <span v-show="showAdvanced">
-          <FrField
-            v-model="privilegeName"
-            class="mb-4 flex-grow-1"
-            :label="$t('pages.access.privilegeName')"
-            :name="`privilegeName_${index}`"
-            :validation="privilegeNameValidation"
+          <FrField v-model="privilegeName" class="mb-4 flex-grow-1" :label="$t('pages.access.privilegeName')"
+            :name="`privilegeName_${index}`" :validation="privilegeNameValidation"
             @input="privilegeModel.name = $event" />
-          <BCard
-            body-class="p-0"
-            class="shadow-none">
+          <BCard body-class="p-0" class="shadow-none">
             <div class="p-4 border-bottom">
               <h5>{{ $t('pages.access.attribute') }} {{ $t('pages.access.permissions') }}</h5>
               <div class="mb-0 text-muted">
                 {{ $t('pages.access.managePermissions') }}
                 <span>
-                  <BDropdown
-                    variant="link"
-                    no-caret
-                    toggle-class="text-decoration-none p-0"
-                    :disabled="disabled">
+                  <BDropdown variant="link" no-caret toggle-class="text-decoration-none p-0" :disabled="disabled">
                     <template #button-content>
                       <span>
                         {{ $t('pages.access.setAllAttributes') }}
@@ -141,9 +90,7 @@ of the MIT license. See the LICENSE file for details. -->
                     <BDropdownItem @click="setAllAccessFlags(true)">
                       {{ $t('pages.access.read') }}
                     </BDropdownItem>
-                    <BDropdownItem
-                      v-if="showReadWrite"
-                      @click="setAllAccessFlags(false)">
+                    <BDropdownItem v-if="showReadWrite" @click="setAllAccessFlags(false)">
                       {{ $t('pages.access.readWrite') }}
                     </BDropdownItem>
                     <BDropdownItem @click="removeAllAccessFlags()">
@@ -153,22 +100,13 @@ of the MIT license. See the LICENSE file for details. -->
                 </span>.
               </div>
             </div>
-            <div
-              id="attributePermissionsContainer"
-              class="overflow-auto">
-              <div
-                v-for="attribute in availableAttibutes"
-                role="row"
-                :key="attribute.key"
-                class="p-4 border-top">
+            <div id="attributePermissionsContainer" class="overflow-auto">
+              <div v-for="attribute in availableAttibutes" role="row" :key="attribute.key" class="p-4 border-top">
                 <small class="d-inline-block text-monospace flex-grow-1">
                   {{ attribute.key }}
                 </small>
                 <div class="float-right">
-                  <BDropdown
-                    variant="link"
-                    toggle-class="text-decoration-none p-0"
-                    :disabled="disabled">
+                  <BDropdown variant="link" toggle-class="text-decoration-none p-0" :disabled="disabled">
                     <template #button-content>
                       <span class="mr-5">
                         {{ attribute.status }}
@@ -177,9 +115,7 @@ of the MIT license. See the LICENSE file for details. -->
                     <BDropdownItem @click="setAccessFlag(attribute.key, true)">
                       {{ $t('pages.access.read') }}
                     </BDropdownItem>
-                    <BDropdownItem
-                      v-if="showReadWrite"
-                      @click="setAccessFlag(attribute.key, false)">
+                    <BDropdownItem v-if="showReadWrite" @click="setAccessFlag(attribute.key, false)">
                       {{ $t('pages.access.readWrite') }}
                     </BDropdownItem>
                     <BDropdownItem @click="removeAccessFlag(attribute.key)">
@@ -191,21 +127,12 @@ of the MIT license. See the LICENSE file for details. -->
             </div>
           </BCard>
           <BCard class="mt-4 mb-3 py-1 shadow-none">
-            <FrField
-              v-model="filterOn"
-              class="mb-3"
-              type="boolean"
-              :disabled="disabled"
+            <FrField v-model="filterOn" class="mb-3" type="boolean" :disabled="disabled"
               :label="$t('pages.access.applyFilter', { resource: pluralizeValue(identityObjectSchema.title) })"
               @input="toggleFilter" />
-            <div
-              v-if="filterOn"
-              class="pt-2">
-              <FrQueryFilterBuilder
-                @change="queryFilterChange"
-                :disabled="disabled"
-                :query-filter-string="privilegeModel.filter"
-                :resource-name="identityObjectSchema.title.toLowerCase()"
+            <div v-if="filterOn" class="pt-2">
+              <FrQueryFilterBuilder @change="queryFilterChange" :disabled="disabled"
+                :query-filter-string="privilegeModel.filter" :resource-name="identityObjectSchema.title.toLowerCase()"
                 :properties="queryFilterDropdownOptions" />
             </div>
           </BCard>
@@ -216,16 +143,11 @@ of the MIT license. See the LICENSE file for details. -->
 </template>
 
 <script>
-import {
-  cloneDeep,
-  find,
-  findIndex,
-  filter,
-  has,
-  includes,
-  map,
-  pickBy,
-} from 'lodash';
+import FrField from '@forgerock/platform-shared/src/components/Field';
+import FrIcon from '@forgerock/platform-shared/src/components/Icon';
+import FrQueryFilterBuilder from '@forgerock/platform-shared/src/components/filterBuilder/QueryFilterBuilder';
+import NotificationMixin from '@forgerock/platform-shared/src/mixins/NotificationMixin/';
+import { pluralizeValue } from '@forgerock/platform-shared/src/utils/PluralizeUtils';
 import {
   BButton,
   BCard,
@@ -234,11 +156,16 @@ import {
   BFormCheckbox,
   BTable,
 } from 'bootstrap-vue';
-import { pluralizeValue } from '@forgerock/platform-shared/src/utils/PluralizeUtils';
-import FrField from '@forgerock/platform-shared/src/components/Field';
-import FrIcon from '@forgerock/platform-shared/src/components/Icon';
-import FrQueryFilterBuilder from '@forgerock/platform-shared/src/components/filterBuilder/QueryFilterBuilder';
-import NotificationMixin from '@forgerock/platform-shared/src/mixins/NotificationMixin/';
+import {
+  cloneDeep,
+  filter,
+  find,
+  findIndex,
+  has,
+  includes,
+  map,
+  pickBy,
+} from 'lodash';
 
 export default {
   name: 'PrivilegeEditor',
@@ -538,12 +465,11 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-
 .actions {
   text-align: right;
 }
 
-:deep {
+:deep() {
   #attributePermissionsContainer {
     max-height: 270px;
   }
@@ -552,7 +478,7 @@ export default {
     width: 70px;
   }
 
-  .table.b-table > tbody > .b-table-details > td {
+  .table.b-table>tbody>.b-table-details>td {
     padding-top: 0;
   }
 }

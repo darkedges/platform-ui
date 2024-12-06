@@ -7,9 +7,7 @@ of the MIT license. See the LICENSE file for details. -->
     <FrNavbar>
       <template #center-content>
         <slot name="center-content">
-          <h1
-            class="h4 font-weight-bold m-0"
-            data-testid="wizard-title">
+          <h1 class="h4 font-weight-bold m-0" data-testid="wizard-title">
             {{ title }}
           </h1>
         </slot>
@@ -18,80 +16,45 @@ of the MIT license. See the LICENSE file for details. -->
         <slot name="right-content" />
       </template>
     </FrNavbar>
-    <BCard
-      class="wizard-tabs card-tabs-vertical"
-      no-body>
-      <FrSpinner
-        v-if="isLoading"
-        testid="form-wizard-spinner"
-        class="py-5" />
-      <BTabs
-        v-else
-        v-model="currentStep"
-        :lazy="lazy"
-        content-class="fr-wizard-content"
+    <BCard class="wizard-tabs card-tabs-vertical" no-body>
+      <FrSpinner v-if="isLoading" testid="form-wizard-spinner" class="py-5" />
+      <BTabs v-else v-model="currentStep" :lazy="lazy" content-class="fr-wizard-content"
         :active-nav-item-class="progressDots && 'fr-active-nav-item'"
-        :nav-wrapper-class="[progressDots && 'progress-dots-padding', 'fr-wizard pt-3']"
-        pills
-        vertical>
-        <VeeForm
-          v-slot="{ meta: { valid }}"
-          as="span">
-          <BTab
-            v-for="(tab, index) in tabs"
-            :key="tab.title"
-            :data-testid="tab.title"
+        :nav-wrapper-class="[progressDots && 'progress-dots-padding', 'fr-wizard pt-3']" pills vertical>
+        <VeeForm v-slot="{ meta: { valid } }" as="span">
+          <BTab v-for="(tab, index) in tabs" :key="tab.title" :data-testid="tab.title"
             :class="[tabs[currentStep].hideFooter && 'wizard-footer-hidden', 'wizard-tab']"
-            :title-item-class="(!edit && index > highestVisitedStep) && 'disabled'"
-            no-fade>
+            :title-item-class="(!edit && index > highestVisitedStep) && 'disabled'" no-fade>
             <template #title>
               <div class="position-relative">
-                <div
-                  v-if="progressDots"
-                  data-testid="progress-dots"
-                  :class="[
-                    'circle',
-                    index === tabs.length - 1 ? 'fr-step-placeholder' : 'fr-step-bridge',
-                    {
-                      completed: index < currentStep,
-                      current: index === currentStep
-                    }
-                  ]" />
+                <div v-if="progressDots" data-testid="progress-dots" :class="[
+                  'circle',
+                  index === tabs.length - 1 ? 'fr-step-placeholder' : 'fr-step-bridge',
+                  {
+                    completed: index < currentStep,
+                    current: index === currentStep
+                  }
+                ]" />
                 {{ tab.title }}
               </div>
             </template>
             <slot :name="tab.title" />
           </BTab>
-          <BCardFooter
-            v-if="!tabs[currentStep].hideFooter"
-            class="d-flex justify-content-between">
+          <BCardFooter v-if="!tabs[currentStep].hideFooter" class="d-flex justify-content-between">
             <div>
-              <BButton
-                v-if="currentStep > 0"
-                @click="changeStep(-1)"
-                variant="link">
+              <BButton v-if="currentStep > 0" @click="changeStep(-1)" variant="link">
                 {{ $t('common.previous') }}
               </BButton>
             </div>
             <div>
-              <BButton
-                @click="$router.push({ path: breadcrumbPath })"
-                variant="link">
+              <BButton @click="$router.push({ path: breadcrumbPath })" variant="link">
                 {{ $t('common.cancel') }}
               </BButton>
-              <BButton
-                v-if="isFinalStep || forceShowSaveButton"
-                data-testid="saveButton"
-                @click="$emit('save')"
-                :disabled="!valid || !validForm"
-                variant="primary">
+              <BButton v-if="isFinalStep || forceShowSaveButton" data-testid="saveButton" @click="$emit('save')"
+                :disabled="!valid || !validForm" variant="primary">
                 {{ $t('common.save') }}
               </BButton>
-              <BButton
-                v-else
-                data-testid="nextButton"
-                @click="changeStep(1)"
-                :disabled="!valid || !validForm"
+              <BButton v-else data-testid="nextButton" @click="changeStep(1)" :disabled="!valid || !validForm"
                 variant="primary">
                 {{ $t('common.next') }}
               </BButton>
@@ -104,10 +67,9 @@ of the MIT license. See the LICENSE file for details. -->
 </template>
 
 <script setup>
-import {
-  ref,
-  computed,
-} from 'vue';
+import FrNavbar from '@forgerock/platform-shared/src/components/Navbar/';
+import FrSpinner from '@forgerock/platform-shared/src/components/Spinner/';
+import useBreadcrumb from '@forgerock/platform-shared/src/composables/breadcrumb';
 import {
   BButton,
   BCard,
@@ -116,9 +78,10 @@ import {
   BTabs,
 } from 'bootstrap-vue';
 import { Form as VeeForm } from 'vee-validate';
-import FrNavbar from '@forgerock/platform-shared/src/components/Navbar/';
-import FrSpinner from '@forgerock/platform-shared/src/components/Spinner/';
-import useBreadcrumb from '@forgerock/platform-shared/src/composables/breadcrumb';
+import {
+  computed,
+  ref,
+} from 'vue';
 
 // Composables
 const {
@@ -200,7 +163,7 @@ setBreadcrumb(props.breadcrumbPath, props.breadcrumbTitle);
 </script>
 
 <style lang="scss" scoped>
-:deep {
+:deep() {
   .fr-wizard {
     min-width: 210px;
 
@@ -288,7 +251,7 @@ setBreadcrumb(props.breadcrumbPath, props.breadcrumbTitle);
     height: 81px !important;
     background-color: $white;
     border-bottom: none;
-    box-shadow: 0 1px 3px rgba(0,0,0,.13);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, .13);
   }
 
   .card {

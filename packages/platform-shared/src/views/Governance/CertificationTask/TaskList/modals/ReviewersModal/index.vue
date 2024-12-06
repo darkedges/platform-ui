@@ -3,47 +3,22 @@
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
 <template>
-  <BModal
-    body-class="p-0"
-    content-class="border-0"
-    :footer-class="!hideCreationButton ? 'justify-content-between' : ''"
-    :id="modalId"
-    no-close-on-backdrop
-    no-close-on-esc
-    scrollable
-    size="lg">
+  <BModal body-class="p-0" content-class="border-0" :footer-class="!hideCreationButton ? 'justify-content-between' : ''"
+    :id="modalId" no-close-on-backdrop no-close-on-esc scrollable size="lg">
     <template #modal-header="{ close }">
       <h5 class="modal-title">
         {{ $t('governance.certificationTask.lineItemReviewersModal.title') }}
       </h5>
-      <BButtonClose
-        variant="link"
-        class="ml-auto"
-        @click="close">
-        <FrIcon
-          name="close"
-          icon-class="md-24" />
+      <BButtonClose variant="link" class="ml-auto" @click="close">
+        <FrIcon name="close" icon-class="md-24" />
       </BButtonClose>
     </template>
     <div>
-      <BTable
-        class="m-0"
-        :items="reviewers"
-        selectable
-        hover
-        :fields="fields"
-        @row-clicked="editReviewer">
+      <BTable class="m-0" :items="reviewers" selectable hover :fields="fields" @row-clicked="editReviewer">
         <template #cell(reviewer)="{ item }">
-          <BMedia
-            v-if="item.id.split('/')[1] === ResourceType.USER"
-            no-body>
+          <BMedia v-if="item.id.split('/')[1] === ResourceType.USER" no-body>
             <BMediaAside vertical-align="center">
-              <BImg
-                class="rounded-circle"
-                height="36"
-                width="36"
-                :alt="item.givenName"
-                :aria-hidden="true"
+              <BImg class="rounded-circle" height="36" width="36" :alt="item.givenName" :aria-hidden="true"
                 :src="item.profileImage || require('@forgerock/platform-shared/src/assets/images/avatar.png')" />
             </BMediaAside>
             <BMediaBody class="text-truncate">
@@ -55,14 +30,11 @@ of the MIT license. See the LICENSE file for details. -->
               </small>
             </BMediaBody>
           </BMedia>
-          <BMedia
-            v-else
-            no-body>
+          <BMedia v-else no-body>
             <BMediaAside vertical-align="center">
-              <div class="rounded-circle d-flex align-items-center justify-content-center bg-lightblue text-primary wh-36px">
-                <FrIcon
-                  name="assignment_ind"
-                  icon-class="md-15" />
+              <div
+                class="rounded-circle d-flex align-items-center justify-content-center bg-lightblue text-primary wh-36px">
+                <FrIcon name="assignment_ind" icon-class="md-15" />
               </div>
             </BMediaAside>
             <BMediaBody class="text-truncate">
@@ -76,37 +48,27 @@ of the MIT license. See the LICENSE file for details. -->
           </BMedia>
         </template>
         <template #cell(permissions)="{ item }">
-          <BBadge
-            class="font-weight-normal pr-2 mr-lg-1 mb-1 mb-lg-0 d-block d-lg-inline-block"
-            v-for="(permission, index) in getPermissionsMapped(item.permissions)"
-            :key="index"
-            variant="light">
-            {{ $t(`governance.certificationTask.lineItemReviewersModal.editReviewerModal.permissionLabels.${permission}`) }}
+          <BBadge class="font-weight-normal pr-2 mr-lg-1 mb-1 mb-lg-0 d-block d-lg-inline-block"
+            v-for="(permission, index) in getPermissionsMapped(item.permissions)" :key="index" variant="light">
+            {{
+              $t(`governance.certificationTask.lineItemReviewersModal.editReviewerModal.permissionLabels.${permission}`)
+            }}
           </BBadge>
         </template>
         <template #cell(actions)="{ item }">
-          <BDropdown
-            no-caret
-            toggle-class="p-1"
-            variant="link">
+          <BDropdown no-caret toggle-class="p-1" variant="link">
             <template #button-content>
-              <FrIcon
-                icon-class="text-dark md-24"
-                name="more_horiz" />
+              <FrIcon icon-class="text-dark md-24" name="more_horiz" />
             </template>
             <BDropdownItem @click="editReviewer(item)">
-              <FrIcon
-                icon-class="mr-2"
-                name="edit">
+              <FrIcon icon-class="mr-2" name="edit">
                 {{ $t('common.edit') }}
               </FrIcon>
             </BDropdownItem>
             <template v-if="reviewers.length > 1">
               <BDropdownDivider />
               <BDropdownItem @click="deleteReviewer(item.id)">
-                <FrIcon
-                  icon-class="mr-2"
-                  name="delete">
+                <FrIcon icon-class="mr-2" name="delete">
                   {{ $t('common.remove') }}
                 </FrIcon>
               </BDropdownItem>
@@ -116,19 +78,12 @@ of the MIT license. See the LICENSE file for details. -->
       </BTable>
     </div>
     <template #modal-footer="{ cancel }">
-      <BButton
-        v-if="!hideCreationButton"
-        variant="outline-primary"
-        @click="openAddReviewerModal()">
-        <FrIcon
-          name="add"
-          icon-class="md-15">
+      <BButton v-if="!hideCreationButton" variant="outline-primary" @click="openAddReviewerModal()">
+        <FrIcon name="add" icon-class="md-15">
           {{ $t('governance.certificationTask.lineItemReviewersModal.addReviewerButtonText') }}
         </FrIcon>
       </BButton>
-      <BButton
-        variant="outline-primary"
-        @click="cancel()">
+      <BButton variant="outline-primary" @click="cancel()">
         {{ $t('common.done') }}
       </BButton>
     </template>
@@ -136,22 +91,22 @@ of the MIT license. See the LICENSE file for details. -->
 </template>
 
 <script>
+import FrIcon from '@forgerock/platform-shared/src/components/Icon';
+import { ResourceType } from '@forgerock/platform-shared/src/utils/governance/types';
 import {
-  BButtonClose,
-  BModal,
-  BTable,
+  BBadge,
   BButton,
+  BButtonClose,
+  BDropdown,
+  BDropdownDivider,
+  BDropdownItem,
+  BImg,
   BMedia,
   BMediaAside,
   BMediaBody,
-  BImg,
-  BBadge,
-  BDropdown,
-  BDropdownItem,
-  BDropdownDivider,
+  BModal,
+  BTable,
 } from 'bootstrap-vue';
-import FrIcon from '@forgerock/platform-shared/src/components/Icon';
-import { ResourceType } from '@forgerock/platform-shared/src/utils/governance/types';
 
 export default {
   name: 'ReviewersModal',
@@ -243,7 +198,8 @@ export default {
   width: 36px;
   height: 36px;
 }
-:deep {
+
+:deep() {
   .w-114px {
     width: 114px;
   }

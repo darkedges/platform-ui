@@ -941,6 +941,10 @@
         "removeConfirmationMessage": "Are you sure you want to remove from <strong>{username}’s</strong> profile?",
         "unknown": "Unknown"
       },
+      "tdifDocuments": {
+        "title": "TDIF Documents",
+        "subtitle": "TDIF Documents verified for this account."
+      },
       "accountControls": {
         "title": "Account Controls",
         "subtitle": "Download or delete your account data.",

@@ -3,25 +3,14 @@
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
 <template>
-  <FrListGroup
-    v-show="mappings.length"
-    :title="$t('pages.profile.consent.title')"
+  <FrListGroup v-show="mappings.length" :title="$t('pages.profile.consent.title')"
     :subtitle="$t('pages.profile.consent.subtitle')">
-    <FrListItem
-      v-for="mapping in mappings"
-      :key="mapping.name"
-      :collapsible="mapping.consented"
-      :panel-shown="false">
+    <FrListItem v-for="mapping in mappings" :key="mapping.name" :collapsible="mapping.consented" :panel-shown="false">
       <template #list-item-header>
         <div class="d-flex justify-content-between align-items-center w-100">
           <BMedia vertical-align="center">
             <template #aside>
-              <FrFallbackImage
-                :src="mapping.icon"
-                class="mr-3"
-                width="24"
-                height="24"
-                :alt="mapping.displayName"
+              <FrFallbackImage :src="mapping.icon" class="mr-3" width="24" height="24" :alt="mapping.displayName"
                 fallback="settings_applications" />
             </template>
             <div>
@@ -34,62 +23,41 @@ of the MIT license. See the LICENSE file for details. -->
             </small>
           </BMedia>
           <div class="d-flex align-self-right">
-            <BButton
-              variant="link"
-              @click.stop.prevent="showModal(mapping.name)">
+            <BButton variant="link" @click.stop.prevent="showModal(mapping.name)">
               {{ $t(`pages.profile.consent.${mapping.consented ? 'deny' : 'allow'}`) }}
             </BButton>
-            <div
-              class="caret ml-2 my-auto list-group-item-action"
-              v-if="mapping.consented">
-              <FrIcon
-                icon-class="font-weight-bolder md-24 mb-1 pr-0 caret-down align-self-center"
+            <div class="caret ml-2 my-auto list-group-item-action" v-if="mapping.consented">
+              <FrIcon icon-class="font-weight-bolder md-24 mb-1 pr-0 caret-down align-self-center"
                 name="keyboard_arrow_down" />
-              <FrIcon
-                icon-class="font-weight-bolder md-24 mb-1 pr-0 caret-up align-self-center"
+              <FrIcon icon-class="font-weight-bolder md-24 mb-1 pr-0 caret-up align-self-center"
                 name="keyboard_arrow_up" />
             </div>
           </div>
         </div>
-        <BModal
-          :id="mapping.name"
-          :ref="mapping.name"
-          size="md"
-          cancel-variant="outline-secondary">
+        <BModal :id="mapping.name" :ref="mapping.name" size="md" cancel-variant="outline-secondary">
           <template #modal-header>
             <div class="d-flex w-100 h-100">
               <h2 class="modal-title align-self-center text-center h5">
                 {{ mapping.modalHeader }}
               </h2>
-              <button
-                type="button"
-                :aria-label="$t('common.close')"
-                class="close"
+              <button type="button" :aria-label="$t('common.close')" class="close"
                 @click.stop.prevent="hideModal(mapping.name)">
-                <FrIcon
-                  icon-class="font-weight-bolder md-24 mb-1"
-                  name="close" />
+                <FrIcon icon-class="font-weight-bolder md-24 mb-1" name="close" />
               </button>
             </div>
           </template>
           <BContainer>
-            <p
-              v-if="mapping.consented"
-              v-html="$t('pages.profile.consent.confirmDeny', {mappingName: mapping.displayName})" />
-            <FrAccessLevel
-              v-else
-              :fields="mapping.fields" />
+            <p v-if="mapping.consented"
+              v-html="$t('pages.profile.consent.confirmDeny', { mappingName: mapping.displayName })" />
+            <FrAccessLevel v-else :fields="mapping.fields" />
           </BContainer>
 
           <template #modal-footer>
             <div class="float-right">
-              <BButton
-                variant="outline-secondary mr-2"
-                @click.stop.prevent="hideModal(mapping.name)">
+              <BButton variant="outline-secondary mr-2" @click.stop.prevent="hideModal(mapping.name)">
                 {{ $t('common.cancel') }}
               </BButton>
-              <BButton
-                :variant="mapping.consented ? 'danger' : 'primary'"
+              <BButton :variant="mapping.consented ? 'danger' : 'primary'"
                 @click.stop.prevent="toggleConsentAndHideModal(mapping)">
                 {{ $t(`pages.profile.consent.${mapping.consented ? 'deny' : 'allow'}`) }}
               </BButton>
@@ -106,28 +74,28 @@ of the MIT license. See the LICENSE file for details. -->
 </template>
 
 <script>
+import AccessLevel from '@/components/profile/AccessLevel';
+import FallbackImage from '@/components/utils/FallbackImage';
+import FrIcon from '@forgerock/platform-shared/src/components/Icon';
+import ListGroup from '@forgerock/platform-shared/src/components/ListGroup/';
+import ListItem from '@forgerock/platform-shared/src/components/ListItem/';
+import RestMixin from '@forgerock/platform-shared/src/mixins/RestMixin';
+import { useUserStore } from '@forgerock/platform-shared/src/stores/user';
+import encodeQueryString from '@forgerock/platform-shared/src/utils/encodeQueryString';
 import {
   BButton,
   BContainer,
   BMedia,
   BModal,
 } from 'bootstrap-vue';
+import dayjs from 'dayjs';
+import advancedFormat from 'dayjs/plugin/advancedFormat';
 import {
   cloneDeep,
   first,
   isUndefined,
 } from 'lodash';
-import dayjs from 'dayjs';
-import advancedFormat from 'dayjs/plugin/advancedFormat';
 import { mapState } from 'pinia';
-import { useUserStore } from '@forgerock/platform-shared/src/stores/user';
-import ListGroup from '@forgerock/platform-shared/src/components/ListGroup/';
-import ListItem from '@forgerock/platform-shared/src/components/ListItem/';
-import RestMixin from '@forgerock/platform-shared/src/mixins/RestMixin';
-import encodeQueryString from '@forgerock/platform-shared/src/utils/encodeQueryString';
-import FrIcon from '@forgerock/platform-shared/src/components/Icon';
-import AccessLevel from '@/components/profile/AccessLevel';
-import FallbackImage from '@/components/utils/FallbackImage';
 
 dayjs.extend(advancedFormat);
 
@@ -241,8 +209,10 @@ export default {
 };
 </script>
 <style lang="scss" scoped>
-:deep {
-  .card-body, .list-group-item {
+:deep() {
+
+  .card-body,
+  .list-group-item {
     border-bottom: none !important;
     box-shadow: none !important;
   }

@@ -6,7 +6,7 @@
  */
 
 import { defineStore } from 'pinia';
-import { ref, computed } from 'vue';
+import { computed, ref } from 'vue';
 
 // eslint-disable-next-line import/prefer-default-export
 export const useUserStore = defineStore('user', () => {

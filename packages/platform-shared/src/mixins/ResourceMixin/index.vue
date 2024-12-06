@@ -4,6 +4,9 @@ This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
 <script>
 /* eslint-disable no-restricted-syntax */
+import { getManagedResourceCount } from '@forgerock/platform-shared/src/api/ManagedResourceApi';
+import PasswordPolicyMixin from '@forgerock/platform-shared/src/mixins/PasswordPolicyMixin';
+import { useUserStore } from '@forgerock/platform-shared/src/stores/user';
 import {
   cloneDeep,
   each,
@@ -11,12 +14,9 @@ import {
   find,
   has,
   isArray,
-  map,
   isEqual,
+  map,
 } from 'lodash';
-import { useUserStore } from '@forgerock/platform-shared/src/stores/user';
-import PasswordPolicyMixin from '@forgerock/platform-shared/src/mixins/PasswordPolicyMixin';
-import { getManagedResourceCount } from '@forgerock/platform-shared/src/api/ManagedResourceApi';
 
 /**
  * @description Resource management mixin used for generating an update patch and handling policy errors
@@ -61,7 +61,6 @@ export default {
           }
         });
       }
-
       return map(changes, (formField) => {
         if (formField.value === '' || formField.value === null || formField.value === undefined) {
           return { operation: 'remove', field: `/${formField.name}` };

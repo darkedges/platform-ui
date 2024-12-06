@@ -68,7 +68,7 @@ function getPlugins() {
   return plugins;
 }
 
-const SUBFOLDER = './';
+const SUBFOLDER = '/enduser/';
 module.exports = {
   publicPath: SUBFOLDER,
   runtimeCompiler: true,
@@ -101,7 +101,8 @@ module.exports = {
         port: process.env.DEV_PORT || 8888,
       },
     },
-    webSocketServer: process.env.NODE_ENV !== 'development' ? false : 'ws',
+    //webSocketServer: process.env.NODE_ENV !== 'development' ? false : 'ws',
+    webSocketServer: false,
     compress: false,
     historyApiFallback: true,
   },

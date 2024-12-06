@@ -4,28 +4,15 @@ This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
 <template>
   <div>
-    <FrLayout
-      :footer="accountFooter"
-      :is-enduser="true"
-      :is-fraas="$store.state.isFraas"
-      :menu-items="menuItems"
-      :version="version"
-      :class="{invisible: theme === null}">
+    <FrLayout :footer="accountFooter" :is-enduser="true" :is-fraas="$store.state.isFraas" :menu-items="menuItems"
+      :version="version" :class="{ invisible: theme === null }">
       <RouterView v-slot="{ Component }">
-        <Transition
-          name="fade"
-          mode="out-in">
-          <Component
-            :is="Component"
-            :key="$route.fullPath"
-            :theme="theme" />
+        <Transition name="fade" mode="out-in">
+          <Component :is="Component" :key="$route.fullPath" :theme="theme" />
         </Transition>
       </RouterView>
     </FrLayout>
-    <ThemeInjector
-      :theme="theme"
-      :is-enduser="true"
-      v-if="theme !== null" />
+    <ThemeInjector :theme="theme" :is-enduser="true" v-if="theme !== null" />
     <FrSessionTimeoutWarning />
   </div>
 </template>
@@ -199,7 +186,7 @@ export default {
           routeTo: { name: 'Profile' },
           displayName: 'sideMenu.profile',
           icon: 'account_circle',
-        },
+        }
       ],
       version: '',
     };
@@ -305,11 +292,11 @@ export default {
       // Risk Dashboard / Fraud Analyst
       getConfig().then(() => {
         this.showRiskDashboad();
-      }).catch(() => {});
+      }).catch(() => { });
       // Risk Administration / Data Analyst
       getDefaultProcess().then(() => {
         this.showRiskAdministration();
-      }).catch(() => {});
+      }).catch(() => { });
     },
     showRiskAdministration() {
       const autoAccessAdminMenu = [

@@ -4,23 +4,12 @@ This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
 <template>
   <div class="position-relative">
-    <div
-      data-testid="chart"
-      ref="d3chart"
-      :id="id" />
-    <div
-      data-testid="legend"
-      :class="[{ 'd-flex justify-content-center mt-4': !legendClass.length}, legendClass]">
-      <ul
-        v-if="legend.length"
-        class="list-unstyled">
-        <li
-          v-for="item in legend"
-          :key="item.label">
+    <div data-testid="chart" ref="d3chart" :id="id" />
+    <div data-testid="legend" :class="[{ 'd-flex justify-content-center mt-4': !legendClass.length }, legendClass]">
+      <ul v-if="legend.length" class="list-unstyled">
+        <li v-for="item in legend" :key="item.label">
           <span class="d-flex align-items-center">
-            <div
-              class="rounded-pill mr-3"
-              :style="{ height: '10px', width: '24px', 'background-color': item.color }" />
+            <div class="rounded-pill mr-3" :style="{ height: '10px', width: '24px', 'background-color': item.color }" />
             <template v-if="showLegendCount">
               {{ item.label }} ({{ item.value }})
             </template>
@@ -35,8 +24,8 @@ of the MIT license. See the LICENSE file for details. -->
 </template>
 
 <script>
-import * as d3 from 'd3';
 import styles from '@/scss/main.scss';
+import * as d3 from 'd3';
 
 /*
  * @description Pie Chart Component used to show data in a pie chart with percentages according the value of each item,
@@ -251,7 +240,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-:deep {
+:deep() {
   .arrow {
     position: absolute;
     display: block;

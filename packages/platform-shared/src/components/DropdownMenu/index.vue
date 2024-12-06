@@ -3,10 +3,7 @@
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
 <template>
-  <BDropdown
-    :right="right"
-    variant="link"
-    toggle-class="text-decoration-none p-0">
+  <BDropdown :right="right" variant="link" toggle-class="text-decoration-none p-0">
     <slot name="tenant-header" />
     <template #button-content>
       <!-- @slot Button content -->
@@ -14,9 +11,7 @@ of the MIT license. See the LICENSE file for details. -->
     </template>
     <!-- @slot Dropdown header -->
     <slot name="dropdown-header" />
-    <template
-      v-for="(item, index) in dropdownItems"
-      :key="`sideDropdownItems_${index}`">
+    <template v-for="(item, index) in dropdownItems" :key="`sideDropdownItems_${index}`">
       <template>
         <FrMenuItem v-bind="item" />
       </template>
@@ -26,9 +21,7 @@ of the MIT license. See the LICENSE file for details. -->
       <BDropdownItem @click="$router.push({ name: 'Profile' })">
         <BMedia class="text-left">
           <template #aside>
-            <BAvatar
-              size="34"
-              variant="light"
+            <BAvatar size="34" variant="light"
               :src="profileImage.length ? profileImage : require('@forgerock/platform-shared/src/assets/images/avatar.png')" />
           </template>
           <div class="h5 my-0 text-truncate">
@@ -46,13 +39,8 @@ of the MIT license. See the LICENSE file for details. -->
       </BDropdownItem>
       <BDropdownDivider v-if="enableLogout" />
     </template>
-    <BDropdownItem
-      v-if="enableLogout"
-      class="mb-2"
-      @click="logoutUser()">
-      <FrIcon
-        icon-class="mr-2"
-        name="exit_to_app">
+    <BDropdownItem v-if="enableLogout" class="mb-2" @click="logoutUser()">
+      <FrIcon icon-class="mr-2" name="exit_to_app">
         {{ $t('common.signOut') }}
       </FrIcon>
     </BDropdownItem>
@@ -60,19 +48,19 @@ of the MIT license. See the LICENSE file for details. -->
 </template>
 
 <script>
+import FrIcon from '@forgerock/platform-shared/src/components/Icon';
+import MenuItem from '@forgerock/platform-shared/src/components/MenuItem';
+import LoginMixin from '@forgerock/platform-shared/src/mixins/LoginMixin';
+import { useEnduserStore } from '@forgerock/platform-shared/src/stores/enduser';
+import { useUserStore } from '@forgerock/platform-shared/src/stores/user';
 import {
   BAvatar,
   BDropdown,
-  BDropdownItem,
   BDropdownDivider,
+  BDropdownItem,
   BMedia,
 } from 'bootstrap-vue';
-import MenuItem from '@forgerock/platform-shared/src/components/MenuItem';
-import LoginMixin from '@forgerock/platform-shared/src/mixins/LoginMixin';
-import FrIcon from '@forgerock/platform-shared/src/components/Icon';
 import { mapState } from 'pinia';
-import { useUserStore } from '@forgerock/platform-shared/src/stores/user';
-import { useEnduserStore } from '@forgerock/platform-shared/src/stores/enduser';
 /**
  * Bootstrap dropdown menu used in navbar and sidemenu
  */
@@ -128,7 +116,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-:deep {
+:deep() {
   .b-dropdown {
     width: 100%;
   }
@@ -154,10 +142,12 @@ export default {
   }
 
   .dropdown-item {
+
     h5,
     span:not(.material-icons-outlined) {
       font-size: 0.875rem;
     }
+
     .media-body {
       overflow: hidden;
     }

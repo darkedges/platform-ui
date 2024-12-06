@@ -6,84 +6,41 @@ of the MIT license. See the LICENSE file for details. -->
   <div>
     <div class="d-flex justify-content-between certification-task-list_controls">
       <div class="d-flex justify-content-start">
-        <FrTaskMultiSelect
-          v-if="campaignDetails.allowBulkCertify && !isStaged"
-          @select-tasks="selectTasks($event)"
-          @select-all-tasks="selectAllTasks"
-          :campaign-details="campaignDetails"
-          :cert-grant-type="certificationGrantType"
-          :selected-tasks="selectedItems" />
+        <FrTaskMultiSelect v-if="campaignDetails.allowBulkCertify && !isStaged" @select-tasks="selectTasks($event)"
+          @select-all-tasks="selectAllTasks" :campaign-details="campaignDetails"
+          :cert-grant-type="certificationGrantType" :selected-tasks="selectedItems" />
       </div>
       <div>
-        <BButton
-          v-if="!entitlementUserId"
-          @click="showFiltersSection = !showFiltersSection"
-          :aria-label="$t('governance.showFilters')"
-          class="mr-2"
-          data-testid="cert-filter-button"
-          variant="link-dark">
+        <BButton v-if="!entitlementUserId" @click="showFiltersSection = !showFiltersSection"
+          :aria-label="$t('governance.showFilters')" class="mr-2" data-testid="cert-filter-button" variant="link-dark">
           <FrIcon name="filter_list" />
         </BButton>
-        <BButton
-          @click="openSortModal()"
-          :aria-label="$t('common.customizeColumns')"
-          class="mr-2"
-          variant="link-dark">
+        <BButton @click="openSortModal()" :aria-label="$t('common.customizeColumns')" class="mr-2" variant="link-dark">
           <FrIcon name="view_column" />
         </BButton>
       </div>
     </div>
     <div v-show="showFiltersSection">
-      <FrTaskFilters
-        v-if="!entitlementUserId"
-        @filter-certification-items="filterItems"
-        :actor-id="actorId"
+      <FrTaskFilters v-if="!entitlementUserId" @filter-certification-items="filterItems" :actor-id="actorId"
         :cert-id="campaignId" />
     </div>
-    <FrSpinner
-      v-if="isLoading"
-      class="py-5" />
-    <BTable
-      v-else-if="items.length"
-      @row-selected="onRowSelected"
-      @sort-changed="sortChange"
-      class="m-0 border-top border-bottom task-list-table"
-      ref="selectableTable"
-      responsive
-      select-mode="single"
-      show-empty
-      :empty-text="$t('common.noRecordsToShow')"
-      :fields="certificationListColumnsToShow"
-      :items="items"
-      :no-local-sorting="true"
-      :per-page="pageSize"
-      :selectable="isSelectable"
-      :sort-by="sortBy"
+    <FrSpinner v-if="isLoading" class="py-5" />
+    <BTable v-else-if="items.length" @row-selected="onRowSelected" @sort-changed="sortChange"
+      class="m-0 border-top border-bottom task-list-table" ref="selectableTable" responsive select-mode="single"
+      show-empty :empty-text="$t('common.noRecordsToShow')" :fields="certificationListColumnsToShow" :items="items"
+      :no-local-sorting="true" :per-page="pageSize" :selectable="isSelectable" :sort-by="sortBy"
       :sort-desc="sortDir === 'desc'">
       <template #cell(selector)="{ item }">
-        <FrField
-          v-if="item.decision.certification.status !== 'signed-off' && !item.isAcknowledge && !isStaged"
-          @change="selectTask($event, item)"
-          class="m-4"
-          name="columnSelected"
-          type="checkbox"
-          :testid="`multiselect-${item.id}`"
-          :value="item.selected" />
+        <FrField v-if="item.decision.certification.status !== 'signed-off' && !item.isAcknowledge && !isStaged"
+          @change="selectTask($event, item)" class="m-4" name="columnSelected" type="checkbox"
+          :testid="`multiselect-${item.id}`" :value="item.selected" />
       </template>
       <template #cell(user)="{ item }">
         <div class="d-flex justify-content-start align-items-center">
-          <BButton
-            @click.stop="openUserModal(item.id, item.manager)"
-            class="text-dark btn-unstyled"
-            variant="link">
+          <BButton @click.stop="openUserModal(item.id, item.manager)" class="text-dark btn-unstyled" variant="link">
             <BMedia>
               <template #aside>
-                <BImg
-                  class="mt-2"
-                  height="24"
-                  width="24"
-                  :alt="item.text"
-                  :aria-hidden="true"
+                <BImg class="mt-2" height="24" width="24" :alt="item.text" :aria-hidden="true"
                   :src="item.profileImage || require('@forgerock/platform-shared/src/assets/images/avatar.png')" />
               </template>
               <div class="media-body">
@@ -100,22 +57,11 @@ of the MIT license. See the LICENSE file for details. -->
       </template>
       <template #cell(application)="{ item }">
         <div class="d-flex justify-content-between align-items-center">
-          <BButton
-            @click.stop="openApplicationModal(item.application, item.applicationOwner, item.glossary)"
-            class="text-dark"
-            variant="link">
-            <BMedia
-              class="align-items-center"
-              data-testid="application-cell"
-              no-body>
-              <img
-                class="mr-4"
-                height="28"
-                width="28"
-                :alt="$t('common.logo')"
-                :aria-hidden="true"
-                :onerror="onImageError"
-                :src="getApplicationLogo(item.application)">
+          <BButton @click.stop="openApplicationModal(item.application, item.applicationOwner, item.glossary)"
+            class="text-dark" variant="link">
+            <BMedia class="align-items-center" data-testid="application-cell" no-body>
+              <img class="mr-4" height="28" width="28" :alt="$t('common.logo')" :aria-hidden="true"
+                :onerror="onImageError" :src="getApplicationLogo(item.application)">
               <div class="media-body align-self-center overflow-hidden text-nowrap">
                 <span class="text-dark">
                   {{ item.application.name }}
@@ -127,10 +73,7 @@ of the MIT license. See the LICENSE file for details. -->
       </template>
       <template #cell(entitlement)="{ item }">
         <div class="d-flex justify-content-between align-items-center">
-          <BButton
-            @click.stop="openEntitlementModal(item)"
-            class="text-dark pl-0"
-            data-testid="entitlement-cell"
+          <BButton @click.stop="openEntitlementModal(item)" class="text-dark pl-0" data-testid="entitlement-cell"
             variant="link">
             {{ getResourceDisplayName(item, '/entitlement') }}
           </BButton>
@@ -138,10 +81,7 @@ of the MIT license. See the LICENSE file for details. -->
       </template>
       <template #cell(account)="{ item }">
         <div class="d-flex justify-content-between align-items-center">
-          <BButton
-            @click.stop="openAccountModal(item)"
-            class="text-dark pl-0"
-            data-testid="account-cell"
+          <BButton @click.stop="openAccountModal(item)" class="text-dark pl-0" data-testid="account-cell"
             variant="link">
             {{ getResourceDisplayName(item, '/account') }}
           </BButton>
@@ -149,50 +89,27 @@ of the MIT license. See the LICENSE file for details. -->
       </template>
       <template #cell(role)="{ item }">
         <div class="d-flex justify-content-between align-items-center">
-          <BButton
-            @click.stop="openRoleModal(item)"
-            class="text-dark pl-0"
-            data-testid="role-cell"
-            variant="link">
+          <BButton @click.stop="openRoleModal(item)" class="text-dark pl-0" data-testid="role-cell" variant="link">
             {{ item.role.name }}
           </BButton>
         </div>
       </template>
       <template #cell(flags)="{ item }">
         <div class="d-flex align-items-center">
-          <div
-            v-for="(flag, index) in item.flags"
-            :key="`flags-${item.id}-${index}`"
-            class="cursor-default">
-            <FrIcon
-              :id="`flags-${item.id}-${index}`"
-              icon-class="md-24 mr-3"
-              :name="flagIcons[flag]" />
-            <BTooltip
-              :target="`flags-${item.id}-${index}`"
-              triggers="hover"
-              placement="top">
+          <div v-for="(flag, index) in item.flags" :key="`flags-${item.id}-${index}`" class="cursor-default">
+            <FrIcon :id="`flags-${item.id}-${index}`" icon-class="md-24 mr-3" :name="flagIcons[flag]" />
+            <BTooltip :target="`flags-${item.id}-${index}`" triggers="hover" placement="top">
               {{ $t(`governance.flags.${flag}`) }}
             </BTooltip>
           </div>
         </div>
       </template>
       <template #cell(comments)="{ item }">
-        <div
-          class="d-flex justify-content-start align-items-center"
-          v-if="getNumberOfComments(item)">
-          <BButton
-            @click="openViewCommentsModal(item.decision.certification.comments, item)"
-            class="text-dark position-relative py-0"
-            data-testid="cert-comments-button"
-            variant="link">
-            <FrIcon
-              icon-class="md-24"
-              name="chat_bubble_outline" />
-            <BBadge
-              class="mr-1 position-absolute comments-counter"
-              pill
-              variant="danger">
+        <div class="d-flex justify-content-start align-items-center" v-if="getNumberOfComments(item)">
+          <BButton @click="openViewCommentsModal(item.decision.certification.comments, item)"
+            class="text-dark position-relative py-0" data-testid="cert-comments-button" variant="link">
+            <FrIcon icon-class="md-24" name="chat_bubble_outline" />
+            <BBadge class="mr-1 position-absolute comments-counter" pill variant="danger">
               {{ getNumberOfComments(item) }}
             </BBadge>
           </BButton>
@@ -203,148 +120,111 @@ of the MIT license. See the LICENSE file for details. -->
       </template>
       <template #cell(actions)="{ item }">
         <template v-if="item.decision.certification.status === 'signed-off'">
-          <BBadge
-            :variant="getVariant(item.decision.certification.decision)"
-            @click="openActivityModal(item)"
-            :id="`itemDecision-${item.id}`"
-            class="w-100 cursor-pointer">
+          <BBadge :variant="getVariant(item.decision.certification.decision)" @click="openActivityModal(item)"
+            :id="`itemDecision-${item.id}`" class="w-100 cursor-pointer">
             {{ item.decision.certification.decision === 'certify' && item.isAcknowledge
               ? $t('governance.certificationTask.actions.acknowledge')
               : startCase(item.decision.certification.decision) }}
           </BBadge>
-          <BTooltip
-            placement="top"
-            :target="`itemDecision-${item.id}`"
-            triggers="hover"
+          <BTooltip placement="top" :target="`itemDecision-${item.id}`" triggers="hover"
             :title="$t('governance.certificationTask.actions.viewActivity')" />
         </template>
-        <div
-          v-else
-          class="d-flex justify-content-end align-items-center">
-          <FrTaskActionsCell
-            @action="handleAction"
-            :campaign-details="campaignDetails"
-            :cert-grant-type="certificationGrantType"
-            :item="item"
-            :is-staged="isStaged" />
+        <div v-else class="d-flex justify-content-end align-items-center">
+          <FrTaskActionsCell @action="handleAction" :campaign-details="campaignDetails"
+            :cert-grant-type="certificationGrantType" :item="item" :is-staged="isStaged" />
 
           <!-- Select Row To Display Entitlements -->
-          <BButton
-            v-if="showAccountDrilldown"
-            :data-testid="`btnSelectEntitlement-${item.id}`"
-            :id="`btnSelectEntitlement-${item.id}`"
-            class="p-1"
-            @click="onRowSelected(item)">
-            <FrIcon
-              data-testid="group-by-icon"
-              icon-class="md-24"
-              name="chevron_right" />
+          <BButton v-if="showAccountDrilldown" :data-testid="`btnSelectEntitlement-${item.id}`"
+            :id="`btnSelectEntitlement-${item.id}`" class="p-1" @click="onRowSelected(item)">
+            <FrIcon data-testid="group-by-icon" icon-class="md-24" name="chevron_right" />
           </BButton>
         </div>
       </template>
     </BTable>
-    <FrNoData
-      v-else
-      :card="false"
-      class="mb-4"
-      data-testid="cert-task-list-no-data"
-      icon="inbox"
+    <FrNoData v-else :card="false" class="mb-4" data-testid="cert-task-list-no-data" icon="inbox"
       :subtitle="$t('governance.certificationTask.noItems')" />
-    <BPagination
-      v-if="totalRows > pageSize"
-      :value="paginationPage"
+    <BPagination v-if="totalRows > pageSize" :value="paginationPage"
       :class="`py-3 justify-content-center pagination-material-buttons ${selectedCount > 0 ? 'action-bar-visible' : ''}`"
-      :per-page="pageSize"
-      :total-rows="totalRows"
-      @input="paginationChange" />
-    <FrFloatingActionBar
-      :buttons="actionBarButtons"
-      :count="selectedCount"
-      :menu-items="actionBarMenuItems"
-      @deselect="selectTasks(false)"
-      @certify="openActionConfirmModal(bulkCertifyModalProps)"
+      :per-page="pageSize" :total-rows="totalRows" @input="paginationChange" />
+    <FrFloatingActionBar :buttons="actionBarButtons" :count="selectedCount" :menu-items="actionBarMenuItems"
+      @deselect="selectTasks(false)" @certify="openActionConfirmModal(bulkCertifyModalProps)"
       @revoke="openActionConfirmModal(bulkRevokeModalProps)"
-      @exception="openActionConfirmModal(bulkExceptionModalProps)"
-      @reassign="$bvModal.show(getModalId('reassign'))"
-      @forward="openForwardModal(null, true, true)"
-      @clearDecisions="bulkReset()" />
+      @exception="openActionConfirmModal(bulkExceptionModalProps)" @reassign="$bvModal.show(getModalId('reassign'))"
+      @forward="openForwardModal(null, true, true)" @clearDecisions="bulkReset()" />
     <!-- Modals -->
-    <FrColumnOrganizer
-      @update-columns="updateColumns"
-      @hidden="closeSortModal"
-      :active-columns="tasksFieldsToSort"
-      :available-columns="availableColumns"
-      :modal-id="getModalId('sort')" />
-    <FrForwardModal
-      :id="currentItemId"
-      :bulk="isBulk"
-      :show-confirm="showConfirm"
-      :modal-id="getModalId('forward')"
-      @forward-item="forward"
-      @forward-bulk="bulkForward" />
-    <FrConfirmActionModal
-      :modal-options="confirmActionModalProps"
-      :modal-id="getModalId('confirm-action')" />
-    <FrReassignModal
-      @change-saving="toggleSaving"
-      :modal-id="getModalId('reassign')"
-      @refresh-data="updateItemList('reassignSuccess')"
-      :campaign-id="campaignId"
-      :selected-tasks="selectedItems"
-      :all-selected="allSelected"
-      :actor-id="actorId" />
-    <FrCommentsModal
-      :enable-add-comments="enableAddComments"
-      :comments="currentCommentsSelectedModal"
-      :modal-id="getModalId('view-comments')"
-      @open-add-comment-modal="openAddCommentModalFromCommentsModal"
+    <FrColumnOrganizer @update-columns="updateColumns" @hidden="closeSortModal" :active-columns="tasksFieldsToSort"
+      :available-columns="availableColumns" :modal-id="getModalId('sort')" />
+    <FrForwardModal :id="currentItemId" :bulk="isBulk" :show-confirm="showConfirm" :modal-id="getModalId('forward')"
+      @forward-item="forward" @forward-bulk="bulkForward" />
+    <FrConfirmActionModal :modal-options="confirmActionModalProps" :modal-id="getModalId('confirm-action')" />
+    <FrReassignModal @change-saving="toggleSaving" :modal-id="getModalId('reassign')"
+      @refresh-data="updateItemList('reassignSuccess')" :campaign-id="campaignId" :selected-tasks="selectedItems"
+      :all-selected="allSelected" :actor-id="actorId" />
+    <FrCommentsModal :enable-add-comments="enableAddComments" :comments="currentCommentsSelectedModal"
+      :modal-id="getModalId('view-comments')" @open-add-comment-modal="openAddCommentModalFromCommentsModal"
       @close-modal="currentCommentsSelectedModal = []" />
-    <FrAddCommentModal
-      @add-comment="addComment"
-      :modal-id="getModalId('add-comment')" />
-    <FrActivityModal
-      :activity="currentLineItemActivity"
-      :modal-id="getModalId('activity')"
+    <FrAddCommentModal @add-comment="addComment" :modal-id="getModalId('add-comment')" />
+    <FrActivityModal :activity="currentLineItemActivity" :modal-id="getModalId('activity')"
       @close-modal="currentLineItemActivity = []" />
-    <FrReviewersModal
-      :reviewers="currentReviewersSelectedModal"
-      :hide-creation-button="!currentLineItemReassignPermission"
-      :modal-id="getModalId('view-reviewers')"
-      @open-edit-reviewer-modal="openEditReviewerModal"
-      @delete-reviewer="deleteReviewer" />
-    <FrEditReviewerModal
-      :reviewer="currentReviewerSelectedModal"
-      :is-saving="isSavingReviewer"
+    <FrReviewersModal :reviewers="currentReviewersSelectedModal"
+      :hide-creation-button="!currentLineItemReassignPermission" :modal-id="getModalId('view-reviewers')"
+      @open-edit-reviewer-modal="openEditReviewerModal" @delete-reviewer="deleteReviewer" />
+    <FrEditReviewerModal :reviewer="currentReviewerSelectedModal" :is-saving="isSavingReviewer"
       :is-deleting="isDeletingReviewer"
       :is-allowed-deletion="currentReviewerSelectedModal && currentReviewersSelectedModal.length > 1 && !isLastSignOffReviewer()"
-      :modal-id="getModalId('edit-reviewers')"
-      :current-user-permissions="currentUserPermissions"
-      @close-modal="closeEditReviewerModal"
-      @edit-reviewer="editReviewer"
-      @delete-reviewer="deleteReviewer" />
-    <FrApplicationModal
-      v-if="currentApplicationSelectedModal"
-      :application="currentApplicationSelectedModal"
+      :modal-id="getModalId('edit-reviewers')" :current-user-permissions="currentUserPermissions"
+      @close-modal="closeEditReviewerModal" @edit-reviewer="editReviewer" @delete-reviewer="deleteReviewer" />
+    <FrApplicationModal v-if="currentApplicationSelectedModal" :application="currentApplicationSelectedModal"
       :glossary-schema="glossarySchema.application" />
-    <FrAccountModal
-      v-if="currentAccountSelectedModal"
-      :grant="currentAccountSelectedModal" />
-    <FrEntitlmentModal
-      :application="currentApplicationSelectedModal"
-      :entitlement="currentEntitlementSelected"
-      :glossary-schema="glossarySchema.entitlement"
-      :modal-id="getModalId('entitlement')" />
-    <FrRoleModal
-      :glossary-schema="glossarySchema.role"
-      :role="currentRoleSelected"
-      :modal-id="getModalId('role')" />
-    <FrGovernanceUserDetailsModal
-      :manager="manager"
-      :user="currentUserSelectedModal"
+    <FrAccountModal v-if="currentAccountSelectedModal" :grant="currentAccountSelectedModal" />
+    <FrEntitlmentModal :application="currentApplicationSelectedModal" :entitlement="currentEntitlementSelected"
+      :glossary-schema="glossarySchema.entitlement" :modal-id="getModalId('entitlement')" />
+    <FrRoleModal :glossary-schema="glossarySchema.role" :role="currentRoleSelected" :modal-id="getModalId('role')" />
+    <FrGovernanceUserDetailsModal :manager="manager" :user="currentUserSelectedModal"
       :user-details="currentUserDetails" />
   </div>
 </template>
 <script>
+import {
+  certifyAllItems,
+  certifyItem,
+  certifyItems,
+  exceptionAllItems,
+  exceptionItem,
+  exceptionItems,
+  forwardAllItems,
+  forwardItem,
+  forwardItems,
+  getCertificationCounts,
+  getCertificationTasksListByCampaign,
+  getEntitlementDetails,
+  getUserDetails,
+  getUserDetailsByType,
+  reassignItem,
+  resetAllItems,
+  resetItem,
+  revokeAllItems,
+  revokeItem,
+  revokeItems,
+  saveComment,
+  updateActors,
+} from '@forgerock/platform-shared/src/api/governance/CertificationApi';
+import { getFilterSchema, getGlossarySchema } from '@forgerock/platform-shared/src/api/governance/CommonsApi';
+import FrColumnOrganizer from '@forgerock/platform-shared/src/components/ColumnOrganizer/ColumnOrganizer';
+import FrField from '@forgerock/platform-shared/src/components/Field';
+import FrFloatingActionBar from '@forgerock/platform-shared/src/components/FloatingActionBar/FloatingActionBar';
+import FrGovernanceUserDetailsModal from '@forgerock/platform-shared/src/components/governance/UserDetailsModal';
+import FrIcon from '@forgerock/platform-shared/src/components/Icon';
+import FrNoData from '@forgerock/platform-shared/src/components/NoData';
+import FrSpinner from '@forgerock/platform-shared/src/components/Spinner/';
+import NotificationMixin from '@forgerock/platform-shared/src/mixins/NotificationMixin';
+import { onImageError } from '@forgerock/platform-shared/src/utils/applicationImageResolver';
+import { getApplicationLogo } from '@forgerock/platform-shared/src/utils/appSharedUtils';
+import { ADMIN_REVIEWER_PERMISSIONS, blankValueIndicator } from '@forgerock/platform-shared/src/utils/governance/constants';
+import { getBasicFilter } from '@forgerock/platform-shared/src/utils/governance/filters';
+import { getGrantFlags, icons, isAcknowledgeType } from '@forgerock/platform-shared/src/utils/governance/flags';
+import { CampaignStates } from '@forgerock/platform-shared/src/utils/governance/types';
+import FrForwardModal from '@forgerock/platform-shared/src/views/Governance/CertificationTask/ForwardModal';
 import {
   BBadge,
   BButton,
@@ -362,60 +242,20 @@ import {
   get,
   isEmpty,
   isNil,
-  pick,
   sortBy as lodashSortBy,
+  pick,
   startCase,
 } from 'lodash';
-import {
-  certifyItem,
-  certifyItems,
-  certifyAllItems,
-  exceptionItem,
-  exceptionItems,
-  exceptionAllItems,
-  forwardItem,
-  forwardItems,
-  forwardAllItems,
-  getCertificationCounts,
-  getCertificationTasksListByCampaign,
-  getEntitlementDetails,
-  getUserDetails,
-  getUserDetailsByType,
-  reassignItem,
-  resetItem,
-  resetAllItems,
-  revokeItems,
-  revokeAllItems,
-  revokeItem,
-  saveComment,
-  updateActors,
-} from '@forgerock/platform-shared/src/api/governance/CertificationApi';
-import { getGlossarySchema, getFilterSchema } from '@forgerock/platform-shared/src/api/governance/CommonsApi';
-import { getApplicationLogo } from '@forgerock/platform-shared/src/utils/appSharedUtils';
-import { ADMIN_REVIEWER_PERMISSIONS, blankValueIndicator } from '@forgerock/platform-shared/src/utils/governance/constants';
-import { CampaignStates } from '@forgerock/platform-shared/src/utils/governance/types';
-import { getGrantFlags, isAcknowledgeType, icons } from '@forgerock/platform-shared/src/utils/governance/flags';
-import { getBasicFilter } from '@forgerock/platform-shared/src/utils/governance/filters';
-import { onImageError } from '@forgerock/platform-shared/src/utils/applicationImageResolver';
-import FrField from '@forgerock/platform-shared/src/components/Field';
-import FrForwardModal from '@forgerock/platform-shared/src/views/Governance/CertificationTask/ForwardModal';
-import FrIcon from '@forgerock/platform-shared/src/components/Icon';
-import FrNoData from '@forgerock/platform-shared/src/components/NoData';
-import FrSpinner from '@forgerock/platform-shared/src/components/Spinner/';
-import NotificationMixin from '@forgerock/platform-shared/src/mixins/NotificationMixin';
-import FrGovernanceUserDetailsModal from '@forgerock/platform-shared/src/components/governance/UserDetailsModal';
-import FrFloatingActionBar from '@forgerock/platform-shared/src/components/FloatingActionBar/FloatingActionBar';
-import FrColumnOrganizer from '@forgerock/platform-shared/src/components/ColumnOrganizer/ColumnOrganizer';
 import FrAccountModal from './modals/AccountModal';
 import FrActivityModal from './modals/ActivityModal';
 import FrAddCommentModal from './modals/AddCommentModal';
 import FrApplicationModal from './modals/ApplicationModal';
-import FrConfirmActionModal, { STEPS } from './modals/ConfirmActionModal';
 import FrCommentsModal from './modals/CommentsModal';
+import FrConfirmActionModal, { STEPS } from './modals/ConfirmActionModal';
 import FrEditReviewerModal from './modals/EditReviewerModal';
 import FrEntitlmentModal from './modals/EntitlementModal';
-import FrReviewersModal from './modals/ReviewersModal';
 import FrReassignModal from './modals/ReassignModal';
+import FrReviewersModal from './modals/ReviewersModal';
 import FrRoleModal from './modals/RoleModal/RoleModal';
 import FrTaskActionsCell from './TaskActionsCell';
 import FrTaskFilters from './TaskFilters';
@@ -486,7 +326,7 @@ export default {
     },
     campaignDetails: {
       type: Object,
-      default: () => {},
+      default: () => { },
     },
     campaignId: {
       type: String,
@@ -1761,13 +1601,16 @@ export default {
     padding: 10px;
   }
 }
+
 .small-column {
   width: 5%;
 }
+
 .clickable:hover {
   cursor: pointer;
   text-decoration: underline;
 }
+
 .comments-counter {
   right: 0.25rem;
   top: -0.25rem;
@@ -1777,24 +1620,29 @@ export default {
   padding-bottom: 120px !important;
 }
 
-:deep {
+:deep() {
   .fr-access-cell {
     padding: 0.5rem 1.5rem !important;
   }
+
   .selector-cell {
     width: 40px;
     padding: 0 .5rem 0 0 !important;
   }
+
   .cert-actions {
     box-shadow: -4px 0px 5px 0px rgb(0 0 0 / 5%);
     padding: 1rem 1rem !important;
   }
+
   .w-200px {
     width: 200px;
   }
+
   .w-230px {
     width: 230px;
   }
+
   .w-140px {
     width: 140px;
   }

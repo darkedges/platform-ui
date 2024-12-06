@@ -5,38 +5,39 @@
  * of the MIT license. See the LICENSE file for details.
  */
 
-import 'whatwg-fetch';
-import 'core-js/stable';
-import {
-  each,
-  has,
-  debounce,
-} from 'lodash';
-import axios from 'axios';
-import Notifications from '@kyvg/vue3-notification';
-import PromisePoly from 'es6-promise';
-import { createApp } from 'vue';
-import AppAuthHelper from 'appauthhelper-enduser/appAuthHelperCompat';
-import SessionCheck from 'oidcsessioncheck-enduser';
-import Vue3Sanitize from 'vue-3-sanitize';
-import { createPinia } from 'pinia';
-import { useUserStore } from '@forgerock/platform-shared/src/stores/user';
-import { useEnduserStore } from '@forgerock/platform-shared/src/stores/enduser';
+import store from '@/store';
+import { sanitizeUrl } from '@braintree/sanitize-url';
 import { getSchema } from '@forgerock/platform-shared/src/api/SchemaApi';
 import { getAmServerInfo } from '@forgerock/platform-shared/src/api/ServerinfoApi';
 import { getSessionTimeoutInfo } from '@forgerock/platform-shared/src/api/SessionsApi';
-import { overrideTranslations, setLocales } from '@forgerock/platform-shared/src/utils/overrideTranslations';
+import { useEnduserStore } from '@forgerock/platform-shared/src/stores/enduser';
+import { useTDIFDocumentStore } from '@forgerock/platform-shared/src/stores/tdif';
+import { useUserStore } from '@forgerock/platform-shared/src/stores/user';
 import parseSub from '@forgerock/platform-shared/src/utils/OIDC';
-import getFQDN from '@forgerock/platform-shared/src/utils/getFQDN';
-import { sanitizeUrl } from '@braintree/sanitize-url';
-import { baseSanitizerConfig } from '@forgerock/platform-shared/src/utils/sanitizerConfig';
-import BootstrapVue from 'bootstrap-vue';
 import createRealmPath from '@forgerock/platform-shared/src/utils/createRealmPath';
+import getFQDN from '@forgerock/platform-shared/src/utils/getFQDN';
 import { getAllLocales } from '@forgerock/platform-shared/src/utils/locale';
-import store from '@/store';
-import router from './router';
-import i18n from './i18n';
+import { overrideTranslations, setLocales } from '@forgerock/platform-shared/src/utils/overrideTranslations';
+import { baseSanitizerConfig } from '@forgerock/platform-shared/src/utils/sanitizerConfig';
+import Notifications from '@kyvg/vue3-notification';
+import AppAuthHelper from 'appauthhelper-enduser/appAuthHelperCompat';
+import axios from 'axios';
+import BootstrapVue from 'bootstrap-vue';
+import 'core-js/stable';
+import PromisePoly from 'es6-promise';
+import {
+  debounce,
+  each,
+  has,
+} from 'lodash';
+import SessionCheck from 'oidcsessioncheck-enduser';
+import { createPinia } from 'pinia';
+import { createApp } from 'vue';
+import Vue3Sanitize from 'vue-3-sanitize';
+import 'whatwg-fetch';
 import App from './App';
+import i18n from './i18n';
+import router from './router';
 
 const pinia = createPinia();
 
@@ -50,6 +51,7 @@ const idmContext = getFQDN(process.env.VUE_APP_IDM_URL);
 router.beforeEach((to, from, next) => {
   const userStore = useUserStore(pinia);
   const enduserStore = useEnduserStore(pinia);
+  const tdifDocumentStore = useTDIFDocumentStore(pinia);
   document.body.className = '';
 
   if (has(to, 'meta.bodyClass')) {
@@ -73,26 +75,26 @@ router.beforeEach((to, from, next) => {
         userStore.userId = userDetails.data.authorization.id;
         userStore.managedResource = userDetails.data.authorization.component;
         userStore.idmRoles = userDetails.data.authorization.roles;
-
         axios.all([
           authInstance.get(`${userDetails.data.authorization.component}/${userDetails.data.authorization.id}`),
           getSchema(userDetails.data.authorization.component, { baseURL: idmContext })]).then(axios.spread((profile, schema) => {
-          enduserStore.setProfile(profile.data);
-          enduserStore.managedResourceSchema = schema.data;
-
-          next();
-        }));
+            enduserStore.setProfile(profile.data);
+            enduserStore.managedResourceSchema = schema.data;
+            tdifDocumentStore.setProfile(profile.data);
+            console.log(profile.data)
+            next();
+          }));
       },
-      () => {
-        // Recheck class in case of double login load using from location
-        document.body.className = '';
+        () => {
+          // Recheck class in case of double login load using from location
+          document.body.className = '';
 
-        if (has(from, 'meta.bodyClass')) {
-          document.body.className = (document.body.className + from.meta.bodyClass).trim();
-        }
+          if (has(from, 'meta.bodyClass')) {
+            document.body.className = (document.body.className + from.meta.bodyClass).trim();
+          }
 
-        next({ name: 'Login' });
-      });
+          next({ name: 'Login' });
+        });
     } else {
       next();
     }

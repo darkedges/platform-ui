@@ -4,50 +4,35 @@ This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
 <template>
   <BContainer>
-    <BRow
-      v-if="theme"
-      class="my-5">
-      <BCol
-        v-if="!theme?.accountPageSections || theme?.accountPageSections.personalInformation.enabled"
-        class="profileCol mb-4"
-        lg="4">
-        <FrEditProfile
-          @updateProfile="updateProfile"
-          :header="fullName"
-          :profile-image="profileImage"
-          :secondary-header="profile.mail"
-          :schema="managedResourceSchema"
-          :profile="profile"
+    <BRow v-if="theme" class="my-5">
+      <BCol v-if="!theme?.accountPageSections || theme?.accountPageSections.personalInformation.enabled"
+        class="profileCol mb-4" lg="4">
+        <p>{{ managedResource }}</p>
+        <FrEditProfile @updateProfile="updateProfile" :header="fullName" :profile-image="profileImage"
+          :secondary-header="profile.mail" :schema="managedResourceSchema" :profile="profile"
           :show-edit="profile._id !== undefined && isInternalUser === false"
           :show-image-upload="managedResourceSchema.properties && managedResourceSchema.properties.profileImage !== undefined" />
       </BCol>
       <BCol :lg="(!theme?.accountPageSections || theme?.accountPageSections.personalInformation.enabled) ? 8 : 12">
+        <FrAccordionTDIFDocuments :profile="profile" :schema="managedResourceSchema" @updateProfile="updateProfile"
+          v-if="!theme?.accountPageSections || theme?.accountPageSections.trustedDevices.enabled" class="mb-5" />
         <FrAccountSecurity
           v-if="(!theme?.accountPageSections || theme?.accountPageSections.accountSecurity.enabled) && isInternalUser === false"
-          class="mb-5"
-          :processing-request="processingRequest"
+          class="mb-5" :processing-request="processingRequest"
           :theme-sections="theme?.accountPageSections ? theme?.accountPageSections.accountSecurity.subsections : {}"
           @updateKBA="updateKBA" />
-        <FrSocial
-          v-if="!theme?.accountPageSections || theme?.accountPageSections.social.enabled"
-          class="mb-5" />
+        <FrSocial v-if="!theme?.accountPageSections || theme?.accountPageSections.social.enabled" class="mb-5" />
         <FrAccordionTrustedDevices
-          v-if="!theme?.accountPageSections || theme?.accountPageSections.trustedDevices.enabled"
-          class="mb-5" />
+          v-if="!theme?.accountPageSections || theme?.accountPageSections.trustedDevices.enabled" class="mb-5" />
         <FrAuthorizedApplications
           v-if="(!theme?.accountPageSections || theme?.accountPageSections.oauthApplications.enabled) && isInternalUser === false"
           class="mb-5" />
         <FrPreferences
           v-if="(!theme?.accountPageSections || theme?.accountPageSections.preferences.enabled) && isInternalUser === false"
-          class="mb-5"
-          @updateProfile="updateProfile" />
-        <FrConsent
-          v-if="!theme?.accountPageSections || theme?.accountPageSections.consent.enabled"
-          class="mb-5"
-          :consented-mappings="profile.consentedMappings"
-          @updateProfile="updateProfile" />
-        <FrAccountControls
-          v-if="!theme?.accountPageSections || theme?.accountPageSections.accountControls.enabled"
+          class="mb-5" @updateProfile="updateProfile" />
+        <FrConsent v-if="!theme?.accountPageSections || theme?.accountPageSections.consent.enabled" class="mb-5"
+          :consented-mappings="profile.consentedMappings" @updateProfile="updateProfile" />
+        <FrAccountControls v-if="!theme?.accountPageSections || theme?.accountPageSections.accountControls.enabled"
           class="mb-5" />
       </BCol>
     </BRow>
@@ -55,21 +40,22 @@ of the MIT license. See the LICENSE file for details. -->
 </template>
 
 <script>
-import FrAccordionTrustedDevices from '@forgerock/platform-shared/src/components/profile/TrustedDevices/AccordionTrustedDevices';
-import { BCol, BContainer, BRow } from 'bootstrap-vue';
-import { mapState } from 'pinia';
-import { useUserStore } from '@forgerock/platform-shared/src/stores/user';
-import { useEnduserStore } from '@forgerock/platform-shared/src/stores/enduser';
-import RestMixin from '@forgerock/platform-shared/src/mixins/RestMixin';
-import NotificationMixin from '@forgerock/platform-shared/src/mixins/NotificationMixin';
-import FrAccountSecurity from '@forgerock/platform-shared/src/components/profile/AccountSecurity';
-import FrEditProfile from '@forgerock/platform-shared/src/components/profile/EditProfile';
 import FrAccountControls from '@/components/profile/AccountControls';
 import FrAuthorizedApplications from '@/components/profile/AuthorizedApplications';
-import FrPreferences from '@/components/profile/Preferences';
 import FrConsent from '@/components/profile/Consent';
+import FrPreferences from '@/components/profile/Preferences';
 import FrSocial from '@/components/profile/Social/';
-
+import store from '@/store';
+import FrAccountSecurity from '@forgerock/platform-shared/src/components/profile/AccountSecurity';
+import FrEditProfile from '@forgerock/platform-shared/src/components/profile/EditProfile';
+import FrAccordionTDIFDocuments from '@forgerock/platform-shared/src/components/profile/TDIFDocuments/AccordionTDIFDocuments';
+import FrAccordionTrustedDevices from '@forgerock/platform-shared/src/components/profile/TrustedDevices/AccordionTrustedDevices';
+import NotificationMixin from '@forgerock/platform-shared/src/mixins/NotificationMixin';
+import RestMixin from '@forgerock/platform-shared/src/mixins/RestMixin';
+import { useEnduserStore } from '@forgerock/platform-shared/src/stores/enduser';
+import { useUserStore } from '@forgerock/platform-shared/src/stores/user';
+import { BCol, BContainer, BRow } from 'bootstrap-vue';
+import { mapState } from 'pinia';
 /**
  * @description Controlling component for profile management
  *
@@ -100,13 +86,14 @@ export default {
     FrEditProfile,
     FrPreferences,
     FrAccordionTrustedDevices,
+    FrAccordionTDIFDocuments,
     FrConsent,
     FrSocial,
   },
   props: {
     theme: {
       type: Object,
-      default: () => {},
+      default: () => { },
     },
   },
   computed: {
@@ -140,6 +127,7 @@ export default {
   },
   methods: {
     getUserProfile() {
+      const { realm } = store.state;
       this.getRequestService().get(`${this.managedResource}/${this.userId}`)
         .then((results) => {
           this.profile = results.data;
@@ -162,8 +150,8 @@ export default {
       });
 
       selfServiceInstance.patch(`${endpoint}/${this.userId}`, payload).then((response) => {
-        const enduserStore = useEnduserStore();
-        enduserStore.setProfile(response.data);
+        const useTDIFDocumentStore = useTDIFDocumentStore();
+        useTDIFDocumentStore.setProfile(response.data);
         this.displayNotification('success', successMsg);
         this.profile = response.data;
 
