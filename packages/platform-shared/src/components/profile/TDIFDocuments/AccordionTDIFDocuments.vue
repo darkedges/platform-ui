@@ -156,7 +156,7 @@ export default {
         description: documentsProperties[name].description,
         items: documentsProperties[name].items,
         format: documentsProperties[name].format,
-        validation: documentsRequired.includes(name) ? 'required' : '',
+        validation: required.includes(name) ? 'required' : '',
         userEditable: documentsProperties[name].userEditable,
       }));
       return formFields;
