@@ -144,10 +144,9 @@ export default {
   },
   methods: {
     getTDIFDocuments() {
-      const { order, properties, required } = this.schema;
+      const { properties, required } = this.schema;
       const documentsProperties = properties['tdifDocuments'].properties
       const documentsOrder = properties['tdifDocuments'].order;
-      const documentsRequired = properties['tdifDocuments'].required;
       const formFields = map(documentsOrder, (name) => ({
         name,
         title: `${documentsProperties[name].title} ${required.includes(name) ? '' : this.$t('common.optional')}`.trim(),
